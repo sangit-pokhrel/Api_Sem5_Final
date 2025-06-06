@@ -36,6 +36,17 @@ const reviewController = require("./interfaces/controllers/review.controller")(
 const reviewRoutes = require("./interfaces/routes/review.routes")(
   reviewController
 );
+//notification routes imports
+const notificationRepo = require("./infrastructure/database/notificationRepoImpl");
+const notificationUseCases =
+  require("./domain/use-cases/notification.usecases")(notificationRepo);
+const notificationController =
+  require("./interfaces/controllers/notification.controller")(
+    notificationUseCases
+  );
+const notificationRoutes = require("./interfaces/routes/notification.routes")(
+  notificationController
+);
 
 
 const app = express();
