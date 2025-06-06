@@ -1,6 +1,4 @@
 "use client"
-
-import { useState } from "react"
 import {
   Home,
   Users,
@@ -27,9 +25,7 @@ const menuItems = [
   { icon: Settings, label: "Settings", active: false },
 ]
 
-export function Sidebar({ isCollapsed, setIsCollapsed }) {
-  const [activeItem, setActiveItem] = useState("Dashboard")
-
+export function Sidebar({ isCollapsed, setIsCollapsed, activeItem, setActiveItem }) {
   return (
     <div
       className={`bg-gray-900 text-white transition-all duration-300 flex flex-col ${isCollapsed ? "w-16" : "w-64"} min-h-screen`}
