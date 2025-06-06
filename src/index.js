@@ -25,7 +25,17 @@ const authController = require("./interfaces/controllers/user.controller")(
 const authRoutes = require("./interfaces/routes/user.routes")(authController);
 const forgotRoutes = require("./interfaces/routes/forgetPassword.routes");
 
-
+//review imports
+const ReviewRepo = require("./infrastructure/database/reviewRepoImpl");
+const reviewUseCases = require("./domain/use-cases/review.usecases")(
+  ReviewRepo
+);
+const reviewController = require("./interfaces/controllers/review.controller")(
+  reviewUseCases
+);
+const reviewRoutes = require("./interfaces/routes/review.routes")(
+  reviewController
+);
 
 
 const app = express();
