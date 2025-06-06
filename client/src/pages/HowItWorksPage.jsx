@@ -136,16 +136,16 @@ export default function HowItWorksPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-white">
       {/* Header */}
-      <header className="border-b bg-white/90 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <header className="border-b bg-white/90 backdrop-blur-md sticky top-0 z-50 shadow-sm">
         <div className="max-w-[90%] mx-auto px-6 py-5 flex items-center justify-between">
-          <Link to="/" className="flex items-center space-x-3">
+          <div className="flex items-center space-x-3">
             <div className="bg-gradient-to-br from-blue-600 to-blue-700 p-2 rounded-xl">
               <Home className="h-7 w-7 text-white" />
             </div>
             <span className="text-2xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
               ServiceHub
             </span>
-          </Link>
+          </div>
 
           <nav className="hidden md:flex items-center space-x-8">
             <Link
@@ -154,17 +154,22 @@ export default function HowItWorksPage() {
             >
               Services
             </Link>
-            <Link to="/how-it-works" className="text-blue-600 font-medium border-b-2 border-blue-600 pb-1">
-              How it Works
-            </Link>
             <Link
-              to="/pricing"
+              to="/how-it-works"
               className="text-slate-600 hover:text-blue-600 font-medium transition-colors duration-200"
             >
-              Pricing
+              How it Works
             </Link>
+            
             <Link to="/about" className="text-slate-600 hover:text-blue-600 font-medium transition-colors duration-200">
               About
+            </Link>
+
+             <Link
+              to="/contactus"
+              className="text-slate-600 hover:text-blue-600 font-medium transition-colors duration-200"
+            >
+              Contact Us
             </Link>
           </nav>
 

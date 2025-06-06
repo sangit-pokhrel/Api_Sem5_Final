@@ -5,6 +5,7 @@ import SignUpPage from "./pages/SignUpPage"
 import ServicesPage from "./pages/ServicesPage"
 import HowItWorksPage from "./pages/HowItWorksPage"
 import AboutPage from "./pages/AboutPage"
+import ContactUsPage from "./pages/ContactUsPage"
 import "./App.css"
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/how-it-works" element={<HowItWorksPage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/contactus" element={<ContactUsPage />} />
         </Routes>
       </div>
     </Router>

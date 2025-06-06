@@ -46,14 +46,16 @@ export default function HomePage() {
             >
               How it Works
             </Link>
-            <Link
-              to="/pricing"
-              className="text-slate-600 hover:text-blue-600 font-medium transition-colors duration-200"
-            >
-              Pricing
-            </Link>
+            
             <Link to="/about" className="text-slate-600 hover:text-blue-600 font-medium transition-colors duration-200">
               About
+            </Link>
+
+             <Link
+              to="/contactus"
+              className="text-slate-600 hover:text-blue-600 font-medium transition-colors duration-200"
+            >
+              Contact Us
             </Link>
           </nav>
 
