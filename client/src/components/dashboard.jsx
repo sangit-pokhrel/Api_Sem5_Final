@@ -1,11 +1,18 @@
 "use client"
 
 import { useState } from "react"
-import { Sidebar } from "./components/sidebar"
-import { Header } from "./components/header"
-import { StatsCard } from "./components/stats-card"
-import { SimpleChart } from "./components/chart"
-import { RecentOrders } from "./components/recent-orders"
+import { Sidebar } from "./admin/sidebar"
+import { Header } from "./admin/header"
+import { StatsCard } from "./admin/stats-card"
+import { SimpleChart } from "./admin/chart"
+import { RecentOrders } from "./admin/recent-orders"
+import { UserManagement } from "./admin/user-management"
+import { Reviews } from "./admin/reviews"
+import { Complaints } from "./admin/complaints"
+import { Analytics } from "./admin/analytics"
+import { Payments } from "./admin/payments"
+import { Orders } from "./admin/orders"
+import { Settings } from "./admin/settings"
 import { Users, ShoppingCart, DollarSign, TrendingUp } from "lucide-react"
 
 const statsData = [
@@ -60,15 +67,12 @@ const trafficData = [
 
 export default function Dashboard() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [activeSection, setActiveSection] = useState("Dashboard")
 
-  return (
-    <div className="flex h-screen bg-gray-100">
-      <Sidebar isCollapsed={sidebarCollapsed} setIsCollapsed={setSidebarCollapsed} />
-
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Header />
-
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
+  const renderContent = () => {
+    switch (activeSection) {
+      case "Dashboard":
+        return (
           <div className="container mx-auto px-6 py-8">
             {/* Page Title */}
             <div className="mb-8">
@@ -156,7 +160,74 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
-        </main>
+        )
+      case "User Management":
+        return (
+          <div className="container mx-auto px-6 py-8">
+            <UserManagement />
+          </div>
+        )
+      case "Reviews":
+        return (
+          <div className="container mx-auto px-6 py-8">
+            <Reviews />
+          </div>
+        )
+      case "Complaints":
+        return (
+          <div className="container mx-auto px-6 py-8">
+            <Complaints />
+          </div>
+        )
+      case "Analytics":
+        return (
+          <div className="container mx-auto px-6 py-8">
+            <Analytics />
+          </div>
+        )
+      case "Payments":
+        return (
+          <div className="container mx-auto px-6 py-8">
+            <Payments />
+          </div>
+        )
+      case "Orders":
+        return (
+          <div className="container mx-auto px-6 py-8">
+            <Orders />
+          </div>
+        )
+      case "Settings":
+        return (
+          <div className="container mx-auto px-6 py-8">
+            <Settings />
+          </div>
+        )
+      default:
+        return (
+          <div className="container mx-auto px-6 py-8">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-gray-900">Page Not Found</h2>
+              <p className="text-gray-600 mt-2">The requested page could not be found.</p>
+            </div>
+          </div>
+        )
+    }
+  }
+
+  return (
+    <div className="flex h-screen bg-gray-100">
+      <Sidebar
+        isCollapsed={sidebarCollapsed}
+        setIsCollapsed={setSidebarCollapsed}
+        activeItem={activeSection}
+        setActiveItem={setActiveSection}
+      />
+
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <Header />
+
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">{renderContent()}</main>
       </div>
     </div>
   )
