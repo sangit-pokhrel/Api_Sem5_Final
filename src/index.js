@@ -48,10 +48,25 @@ const notificationRoutes = require("./interfaces/routes/notification.routes")(
   notificationController
 );
 
+//complaint imports
+const complaintRepo = require("./infrastructure/database/complaintRepoImpl");
+const complaintUseCases = require("./domain/use-cases/complaint.usecases")(
+  complaintRepo
+);
+const complaintController =
+  require("./interfaces/controllers/complaint.controller")(complaintUseCases);
+const complaintRoutes = require("./interfaces/routes/complaint.routes")(
+  complaintController
+);
+
 
 const app = express();
 app.use(express.json());
+app.use("/api/reviews", reviewRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/complaints", complaintRoutes);
+app.use("/api", forgotRoutes);
 
 
 mongoose.connect(process.env.MONGO_URI).then(() => {
