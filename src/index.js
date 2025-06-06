@@ -41,6 +41,7 @@ const reviewRoutes = require("./interfaces/routes/review.routes")(
 const app = express();
 app.use(express.json());
 app.use("/api/auth", authRoutes);
+app.use("/api/reviews", reviewRoutes);
 
 
 mongoose.connect(process.env.MONGO_URI).then(() => {
