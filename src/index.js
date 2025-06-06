@@ -64,9 +64,13 @@ const app = express();
 app.use(express.json());
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/auth", authRoutes);
+
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/complaints", complaintRoutes);
 app.use("/api", forgotRoutes);
+
+
+
 
 
 mongoose.connect(process.env.MONGO_URI).then(() => {
