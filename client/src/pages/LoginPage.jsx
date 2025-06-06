@@ -16,7 +16,7 @@ export default function LoginPage() {
           <div className="space-y-6">
             <Link to="/" className="flex items-center space-x-3">
               <Home className="h-10 w-10 text-blue-600" />
-              <span className="text-3xl font-bold text-slate-900">ServiceHub</span>
+              <span className="text-3xl font-bold text-slate-900">GharSewa</span>
             </Link>
 
             <div className="space-y-4">
