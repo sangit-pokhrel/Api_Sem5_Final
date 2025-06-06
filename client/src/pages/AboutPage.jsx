@@ -395,14 +395,7 @@ export default function AboutPage() {
                         </div>
                       </div>
 
-                      {/* Value Illustration */}
-                      <div className="bg-gradient-to-br from-slate-50 to-slate-100 p-10 flex items-center justify-center">
-                        <div
-                          className={`bg-gradient-to-br ${values[activeValue].color} w-48 h-48 rounded-3xl flex items-center justify-center shadow-2xl transform hover:scale-110 transition-transform duration-300`}
-                        >\
-                          <values[activeValue].icon className="w-24 h-24 text-white" />
-                        </div>
-                      </div>
+                     
                     </div>
                   </CardContent>
                 </Card>
