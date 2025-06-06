@@ -1,12 +1,11 @@
-import React from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import HomePage from './pages/HomePage'
-import LoginPage from './pages/LoginPage'
-import SignUpPage from './pages/SignUpPage'
-import ServicesPage from './pages/ServicesPage'
-import HowItWorksPage from './pages/HowItWorksPage'
-import AboutPage from './pages/AboutPage'
-import './App.css'
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import HomePage from "./pages/HomePage"
+import LoginPage from "./pages/LoginPage"
+import SignUpPage from "./pages/SignUpPage"
+import ServicesPage from "./pages/ServicesPage"
+import HowItWorksPage from "./pages/HowItWorksPage"
+import AboutPage from "./pages/AboutPage"
+import "./App.css"
 
 function App() {
   return (
