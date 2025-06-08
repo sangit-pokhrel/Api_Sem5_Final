@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import axios from "axios"
+import { toast, Toaster } from "react-hot-toast"
 import { Button } from "../components/ui/button"
 import { Input } from "../components/ui/input"
 import { Label } from "../components/ui/label"
@@ -24,7 +25,7 @@ import {
 } from "lucide-react"
 
 export default function SignUpPage() {
-  const navigate = useNavigate()
+   const navigate = useNavigate()
 
   const [formData, setFormData] = useState({
     fullname: "",
@@ -46,31 +47,41 @@ export default function SignUpPage() {
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+  e.preventDefault();
 
-    if (!termsAccepted) {
-      return
-    }
-
-    try {
-      const response = await axios.post("http://localhost:5000/api/register", formData)
-      const { success, message, isRegistered, data } = response.data
-
-      if (success && isRegistered) {
-        sessionStorage.setItem("isRegistered", "true")
-        sessionStorage.setItem("registeredUser", JSON.stringify(data))
-        alert(message)
-        navigate("/login")
-      } else {
-        alert("Registration failed: " + message)
-      }
-    } catch (error) {
-      console.error("Registration Error:", error)
-      alert("Something went wrong. Please try again.")
-    }
+  if (!termsAccepted) {
+    toast.error("Please accept the Terms and Privacy Policy");
+    return;
   }
 
+  try {
+    const response = await axios.post("http://localhost:3000/api/auth/register", formData, {
+  withCredentials: true,
+});
+
+
+    const { success, message, token, user } = response.data;
+
+    if (success) {
+      sessionStorage.setItem("token", token);
+      sessionStorage.setItem("user", JSON.stringify(user));
+      toast.success("Registration successful!");
+      setTimeout(() => navigate("/login"), 2000);
+    } else {
+      toast.error("Registration failed: " + message);
+    }
+  } catch (error) {
+    console.error("Registration Error:", error);
+    const msg =
+      error.response?.data?.message || "Something went wrong. Please try again.";
+    toast.error(msg);
+  }
+};
+
+
   return (
+    <>
+     <Toaster position="top-right" reverseOrder={false} />
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20 flex items-center justify-center p-4">
       <div className="w-full max-w-7xl mx-auto">
         <Card className="shadow-2xl border-0 bg-white/80 backdrop-blur-sm overflow-hidden">
@@ -239,39 +250,50 @@ export default function SignUpPage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="country" className="text-slate-700 font-medium">
-                        Country
-                      </Label>
-                      <div className="relative">
-                        <Globe className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                        <Input
-                          id="country"
-                          name="country"
-                          value={formData.country}
-                          onChange={handleInputChange}
-                          placeholder="Nepal"
-                          className="pl-10 h-12 border-2 focus:border-blue-500 transition-colors"
-                          required
-                        />
-                      </div>
-                    </div>
+  <Label htmlFor="country" className="text-slate-700 font-medium">
+    Country
+  </Label>
+  <div className="relative">
+    <Globe className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+    <select
+      id="country"
+      name="country"
+      value={formData.country}
+      onChange={handleInputChange}
+      required
+      className="pl-10 pr-4 h-12 border-2 rounded-md focus:border-blue-500 transition-colors text-slate-700 bg-white w-full appearance-none"
+    >
+      <option value="Nepal">Nepal</option>
+    </select>
+  </div>
+</div>
+
                     <div className="space-y-2">
-                      <Label htmlFor="province" className="text-slate-700 font-medium">
-                        Province
-                      </Label>
-                      <div className="relative">
-                        <MapPin className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                        <Input
-                          id="province"
-                          name="province"
-                          value={formData.province}
-                          onChange={handleInputChange}
-                          placeholder="Bagmati"
-                          className="pl-10 h-12 border-2 focus:border-blue-500 transition-colors"
-                          required
-                        />
-                      </div>
-                    </div>
+  <Label htmlFor="province" className="text-slate-700 font-medium">
+    Province
+  </Label>
+  <div className="relative">
+    <MapPin className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+    <select
+      id="province"
+      name="province"
+      value={formData.province}
+      onChange={handleInputChange}
+      required
+      className="pl-10 pr-4 h-12 border-2 rounded-md focus:border-blue-500 transition-colors text-slate-700 bg-white w-full appearance-none"
+    >
+      <option value="">Select Province</option>
+      <option value="Province 1">Koshi</option>
+      <option value="Madhesh">Madhesh</option>
+      <option value="Bagmati">Bagmati</option>
+      <option value="Gandaki">Gandaki</option>
+      <option value="Lumbini">Lumbini</option>
+      <option value="Karnali">Karnali</option>
+      <option value="Sudurpashchim">Sudurpashchim</option>
+    </select>
+  </div>
+</div>
+
                   </div>
 
                   <div className="space-y-2">
@@ -344,5 +366,6 @@ export default function SignUpPage() {
         </Card>
       </div>
     </div>
+    </>
   )
 }

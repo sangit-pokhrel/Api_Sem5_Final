@@ -3,10 +3,31 @@ const express = require("express");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const path = require("path");
+const cors = require("cors");
 
 const { connectDB } = require("./infrastructures/database/database");
 dotenv.config();
 
+const app = express();
+app.use(express.json());
+
+
+const allowedOrigins = ["http://localhost:5173", "http://localhost:3000"];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 //auth imports
 const userRepo = require("./infrastructures/database/UserRepoImpl");
@@ -60,16 +81,12 @@ const complaintRoutes = require("./interfaces/routes/complaint.routes")(
 );
 
 
-const app = express();
-app.use(express.json());
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/auth", authRoutes);
 
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/complaints", complaintRoutes);
 app.use("/api", forgotRoutes);
-
-
 
 
 

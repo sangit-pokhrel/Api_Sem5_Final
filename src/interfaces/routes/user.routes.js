@@ -7,7 +7,7 @@ const authMiddleware = require("../middlewares/auth.middlewares");
 module.exports = (controller) => {
   const router = express.Router();
 
-  router.use(rateLimiter);
+  // router.use(rateLimiter);
 
   // Authentication
   router.post("/register", controller.register);
