@@ -40,15 +40,23 @@ module.exports = {
     }
   },
 
-  resetPassword: async (req, res) => {
-    try {
-      const { userId, newPassword, confirmPassword } = req.body;
-      if (newPassword !== confirmPassword)
-        throw new Error("Passwords do not match");
-      await useCase.resetPassword(userId, newPassword);
-      res.json({ message: "Password updated successfully" });
-    } catch (err) {
-      res.status(400).json({ error: err.message });
+resetPassword: async (req, res) => {
+  try {
+    const { userId, newPassword, confirmPassword, role } = req.body;
+
+    if (!userId || !newPassword || !confirmPassword || !role) {
+      throw new Error("Missing required fields");
     }
-  },
+
+    if (newPassword !== confirmPassword) {
+      throw new Error("Passwords do not match");
+    }
+
+    await useCase.resetPassword(role, userId, newPassword);
+    res.json({ message: "Password updated successfully" });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+}
+
 };

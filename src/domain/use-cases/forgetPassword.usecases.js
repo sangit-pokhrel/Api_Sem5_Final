@@ -24,10 +24,16 @@ module.exports = function ForgotPasswordUseCase({
       return true;
     },
 
-    async resetPassword(userId, newPassword) {
-      const hashed = await hashService.hash(newPassword);
-      await userRepo.updatePassword(userId, hashed);
-      return true;
-    },
+  async resetPassword(role, userId, newPassword) {
+  if (!role || !userId || !newPassword) {
+    throw new Error("Missing required fields");
+  }
+
+  const hashed = await hashService.hash(newPassword);
+  await userRepo.updatePasswordById(role, userId, hashed);
+  return true;
+}
+
+
   };
 };

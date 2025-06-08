@@ -40,6 +40,8 @@ module.exports = {
     return await getModelByRole(user.role).create(user);
   },
 
+  
+
   // ====== GET Methods ======
   findByEmail: async (email) => await User.findOne({ email }),
 
@@ -93,11 +95,12 @@ module.exports = {
     return await getModelByRole(role).findOne({ email });
   },
 
-  updatePasswordById: async (role, userId, hashedPassword) => {
-    return await getModelByRole(role).findByIdAndUpdate(
-      userId,
-      { password: hashedPassword },
-      { new: true }
-    );
-  },
+ updatePasswordById: async (role, userId, hashedPassword) => {
+  const model = getModelByRole(role);
+  return await model.findByIdAndUpdate(
+    userId,
+    { password: hashedPassword },
+    { new: true }
+  );
+}
 };

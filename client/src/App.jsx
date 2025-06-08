@@ -8,6 +8,7 @@ import AboutPage from "./pages/AboutPage"
 import ContactUsPage from "./pages/ContactUsPage"
 import "./App.css"
 import Dashboard from "./components/dashboard"
+import { ForgotPasswordFlow } from "./pages/forgetPassword"
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contactus" element={<ContactUsPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/forgot-password" element={<ForgotPasswordFlow />} />
         </Routes>
       </div>
     </Router>
