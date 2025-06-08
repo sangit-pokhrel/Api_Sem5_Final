@@ -1,5 +1,5 @@
 // 📁 src/infrastructure/database/reviewRepoImpl.js
-const Review = require("./models/review.model");
+const Review = require("./model/review.model");
 
 module.exports = {
   createReview: async (data) => await Review.create(data),

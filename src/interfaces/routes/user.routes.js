@@ -1,7 +1,7 @@
 const express = require("express");
 const rateLimiter = require("../middlewares/rateLimiter.middlewares");
 const upload = require("../middlewares/multer.middlewares");
-const authController = require("../controllers/user.controller");
+const authController = require("../controller/user.controller");
 const authMiddleware = require("../middlewares/auth.middlewares");
 
 module.exports = (controller) => {

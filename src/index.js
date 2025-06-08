@@ -4,20 +4,20 @@ const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const path = require("path");
 
-const { connectDB } = require("./infrastructure/database/database");
+const { connectDB } = require("./infrastructures/database/database");
 dotenv.config();
 
 
 //auth imports
-const userRepo = require("./infrastructure/database/UserRepoImpl");
-const hashService = require("./infrastructure/services/hash.service");
-const tokenService = require("./infrastructure/services/token.service");
+const userRepo = require("./infrastructures/database/UserRepoImpl");
+const hashService = require("./infrastructures/services/hash.service");
+const tokenService = require("./infrastructures/services/token.service");
 const authUseCases = require("./domain/use-cases/auth.usecases")(
   userRepo,
   hashService,
   tokenService
 );
-const authController = require("./interfaces/controllers/user.controller")(
+const authController = require("./interfaces/controller/user.controller")(
   authUseCases,
   userRepo
 );
@@ -26,22 +26,22 @@ const authRoutes = require("./interfaces/routes/user.routes")(authController);
 const forgotRoutes = require("./interfaces/routes/forgetPassword.routes");
 
 //review imports
-const ReviewRepo = require("./infrastructure/database/reviewRepoImpl");
+const ReviewRepo = require("./infrastructures/database/reviewRepoImpl");
 const reviewUseCases = require("./domain/use-cases/review.usecases")(
   ReviewRepo
 );
-const reviewController = require("./interfaces/controllers/review.controller")(
+const reviewController = require("./interfaces/controller/review.controller")(
   reviewUseCases
 );
 const reviewRoutes = require("./interfaces/routes/review.routes")(
   reviewController
 );
 //notification routes imports
-const notificationRepo = require("./infrastructure/database/notificationRepoImpl");
+const notificationRepo = require("./infrastructures/database/notificationRepoImpl");
 const notificationUseCases =
   require("./domain/use-cases/notification.usecases")(notificationRepo);
 const notificationController =
-  require("./interfaces/controllers/notification.controller")(
+  require("./interfaces/controller/notification.controller")(
     notificationUseCases
   );
 const notificationRoutes = require("./interfaces/routes/notification.routes")(
@@ -49,12 +49,12 @@ const notificationRoutes = require("./interfaces/routes/notification.routes")(
 );
 
 //complaint imports
-const complaintRepo = require("./infrastructure/database/complaintRepoImpl");
+const complaintRepo = require("./infrastructures/database/complaintRepoImpl");
 const complaintUseCases = require("./domain/use-cases/complaint.usecases")(
   complaintRepo
 );
 const complaintController =
-  require("./interfaces/controllers/complaint.controller")(complaintUseCases);
+  require("./interfaces/controller/complaint.controller")(complaintUseCases);
 const complaintRoutes = require("./interfaces/routes/complaint.routes")(
   complaintController
 );

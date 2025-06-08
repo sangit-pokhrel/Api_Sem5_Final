@@ -1,5 +1,5 @@
 // 📁 src/infrastructure/database/complaintRepoImpl.js
-const Complaint = require("./models/complaint.model");
+const Complaint = require("./model/complaint.model");
 
 module.exports = {
   createComplaint: async (data) => await Complaint.create(data),

@@ -1,7 +1,7 @@
 const ForgotPasswordUseCase = require("../../domain/use-cases/forgetPassword.usecases");
-const HashService = require("../../infrastructure/services/hash.service");
-const OtpService = require("../../infrastructure/services/otp.service");
-const UserRepoImpl = require("../../infrastructure/database/UserRepoImpl");
+const HashService = require("../../infrastructures/services/hash.service");
+const OtpService = require("../../infrastructures/services/otp.service");
+const UserRepoImpl = require("../../infrastructures/database/UserRepoImpl");
 
 const useCase = ForgotPasswordUseCase({
   userRepo: UserRepoImpl,

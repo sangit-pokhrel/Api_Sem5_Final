@@ -1,7 +1,7 @@
 // src/infrastructure/database/UserRepoImpl.js
 
-const User = require("./models/user.models");
-const ServiceProvider = require("./models/serviceProvider.models");
+const User = require("./model/user.models");
+const ServiceProvider = require("./model/serviceProvider.models");
 const UserRepository = require("../../domain/repositories/user.repository");
 
 // Only ServiceProvider is a real discriminator

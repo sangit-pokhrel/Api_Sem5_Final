@@ -1,5 +1,5 @@
 // 📁 src/infrastructure/database/notificationRepoImpl.js
-const Notification = require("./models/notification.model");
+const Notification = require("./model/notification.model");
 
 module.exports = {
   createNotification: async (data) => await Notification.create(data),
