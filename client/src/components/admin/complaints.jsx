@@ -1,9 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { Search, Filter, MoreHorizontal, MessageSquare, CheckCircle, AlertTriangle } from "lucide-react"
+import { PlusCircle } from "lucide-react"
 
-// Sample complaints data
 const complaints = [
   {
     id: 1,
@@ -66,210 +65,173 @@ export function Complaints() {
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("All")
   const [priorityFilter, setPriorityFilter] = useState("All")
-  const [showActions, setShowActions] = useState(null)
   const [expandedComplaint, setExpandedComplaint] = useState(null)
+  const [showModal, setShowModal] = useState(false)
+  const [editComplaintId, setEditComplaintId] = useState(null)
+  const [deleteComplaintId, setDeleteComplaintId] = useState(null)
 
-  const filteredComplaints = complaints.filter(
-    (complaint) =>
-      (complaint.user.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        complaint.service.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        complaint.provider.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        complaint.issue.toLowerCase().includes(searchTerm.toLowerCase())) &&
-      (statusFilter === "All" || complaint.status === statusFilter) &&
-      (priorityFilter === "All" || complaint.priority === priorityFilter),
+  const getComplaintData = (id) => complaints.find((c) => c.id === id) || {}
+  const editingData = getComplaintData(editComplaintId)
+
+  const filtered = complaints.filter(
+    (c) =>
+      (c.user.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        c.service.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        c.provider.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        c.issue.toLowerCase().includes(searchTerm.toLowerCase())) &&
+      (statusFilter === "All" || c.status === statusFilter) &&
+      (priorityFilter === "All" || c.priority === priorityFilter),
   )
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "Open":
-        return "bg-red-100 text-red-800"
-      case "In Progress":
-        return "bg-yellow-100 text-yellow-800"
-      case "Resolved":
-        return "bg-green-100 text-green-800"
-      default:
-        return "bg-gray-100 text-gray-800"
-    }
-  }
-
-  const getPriorityColor = (priority) => {
-    switch (priority) {
-      case "High":
-        return "bg-red-100 text-red-800"
-      case "Medium":
-        return "bg-yellow-100 text-yellow-800"
-      case "Low":
-        return "bg-blue-100 text-blue-800"
-      default:
-        return "bg-gray-100 text-gray-800"
-    }
+  const closeAllModals = () => {
+    setShowModal(false)
+    setEditComplaintId(null)
+    setDeleteComplaintId(null)
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-      <div className="p-6 border-b border-gray-200">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <h2 className="text-xl font-semibold text-gray-900">Customer Complaints</h2>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-              <input
-                type="text"
-                placeholder="Search complaints..."
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            <div className="flex gap-3">
-              <div className="relative">
-                <select
-                  className="pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                >
-                  <option value="All">All Status</option>
-                  <option value="Open">Open</option>
-                  <option value="In Progress">In Progress</option>
-                  <option value="Resolved">Resolved</option>
-                </select>
-                <Filter
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"
-                  size={16}
-                />
+    <div className="p-6 space-y-4">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        <h2 className="text-xl font-semibold text-gray-800">Complaints</h2>
+        <div className="flex gap-3 flex-wrap">
+          <input
+            type="text"
+            placeholder="Search..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="px-3 py-2 border rounded-md w-64"
+          />
+          <select
+            className="px-3 py-2 border rounded-md"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="All">All Status</option>
+            <option value="Open">Open</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Resolved">Resolved</option>
+          </select>
+          <select
+            className="px-3 py-2 border rounded-md"
+            value={priorityFilter}
+            onChange={(e) => setPriorityFilter(e.target.value)}
+          >
+            <option value="All">All Priority</option>
+            <option value="High">High</option>
+            <option value="Medium">Medium</option>
+            <option value="Low">Low</option>
+          </select>
+          <button
+            className="flex items-center gap-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            onClick={() => setShowModal(true)}
+          >
+            <PlusCircle size={16} /> Add Complaint
+          </button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        {filtered.map((c) => (
+          <div
+            key={c.id}
+            className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-all"
+          >
+            <div className="flex justify-between items-start mb-2">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800">{c.user}</h3>
+                <p className="text-sm text-gray-500">{c.service}</p>
               </div>
-              <div className="relative">
-                <select
-                  className="pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"
-                  value={priorityFilter}
-                  onChange={(e) => setPriorityFilter(e.target.value)}
-                >
-                  <option value="All">All Priority</option>
-                  <option value="High">High</option>
-                  <option value="Medium">Medium</option>
-                  <option value="Low">Low</option>
-                </select>
-                <Filter
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"
-                  size={16}
-                />
+              <div className="text-sm text-gray-500">{c.date}</div>
+            </div>
+            <div className="text-sm text-gray-700 mb-2">
+              <strong>Issue:</strong> {c.issue}
+            </div>
+            {expandedComplaint === c.id && (
+              <p className="text-sm text-gray-600 mb-2">{c.description}</p>
+            )}
+            <div className="flex justify-between items-center mt-4">
+              <div className="flex gap-2">
+                <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(c.status)}`}>{c.status}</span>
+                <span className={`px-2 py-1 text-xs rounded-full ${getPriorityColor(c.priority)}`}>{c.priority}</span>
+              </div>
+              <div className="flex gap-2 text-sm text-blue-600">
+                <button onClick={() => setExpandedComplaint(expandedComplaint === c.id ? null : c.id)}>
+                  {expandedComplaint === c.id ? "Hide" : "View"}
+                </button>
+                <button onClick={() => setEditComplaintId(c.id)}>Edit</button>
+                <button onClick={() => setDeleteComplaintId(c.id)} className="text-red-600">Delete</button>
               </div>
             </div>
           </div>
-        </div>
+        ))}
       </div>
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Service
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Issue</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Priority
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {filteredComplaints.map((complaint) => (
-              <>
-                <tr key={complaint.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#{complaint.id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{complaint.user}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {complaint.service}
-                    <div className="text-xs text-gray-400">{complaint.provider}</div>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    <button
-                      className="hover:text-blue-600 focus:outline-none"
-                      onClick={() => setExpandedComplaint(expandedComplaint === complaint.id ? null : complaint.id)}
-                    >
-                      {complaint.issue}
-                    </button>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
-                        complaint.status,
-                      )}`}
-                    >
-                      {complaint.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getPriorityColor(
-                        complaint.priority,
-                      )}`}
-                    >
-                      {complaint.priority}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{complaint.date}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <div className="relative">
-                      <button
-                        onClick={() => setShowActions(showActions === complaint.id ? null : complaint.id)}
-                        className="p-1 rounded-full hover:bg-gray-100"
-                      >
-                        <MoreHorizontal size={16} />
-                      </button>
-                      {showActions === complaint.id && (
-                        <div className="absolute right-0 mt-1 w-40 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
-                          <button className="w-full flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            <MessageSquare size={14} className="mr-2" />
-                            Respond
-                          </button>
-                          <button className="w-full flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            <CheckCircle size={14} className="mr-2" />
-                            Mark as Resolved
-                          </button>
-                          <button className="w-full flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            <AlertTriangle size={14} className="mr-2" />
-                            Escalate
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-                {expandedComplaint === complaint.id && (
-                  <tr>
-                    <td colSpan="8" className="px-6 py-4 bg-gray-50">
-                      <div className="text-sm text-gray-700">
-                        <strong>Description:</strong> {complaint.description}
-                      </div>
-                    </td>
-                  </tr>
-                )}
-              </>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <div className="px-6 py-4 flex items-center justify-between border-t border-gray-200">
-        <div className="text-sm text-gray-500">
-          Showing <span className="font-medium">{filteredComplaints.length}</span> of{" "}
-          <span className="font-medium">{complaints.length}</span> complaints
+
+      {(showModal || editComplaintId !== null || deleteComplaintId !== null) && (
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center">
+          <div className="bg-white w-full max-w-xl p-6 rounded-lg shadow-xl">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">
+                {editComplaintId !== null ? "Edit Complaint" : deleteComplaintId !== null ? "Confirm Deletion" : "Add Complaint"}
+              </h3>
+              <button onClick={closeAllModals} className="text-gray-500 hover:text-red-500 text-xl">×</button>
+            </div>
+            {deleteComplaintId !== null ? (
+              <div className="space-y-4">
+                <p>Are you sure you want to delete this complaint?</p>
+                <div className="flex justify-end gap-3">
+                  <button
+                    onClick={closeAllModals}
+                    className="px-4 py-2 rounded border border-gray-300"
+                  >
+                    Cancel
+                  </button>
+                  <button className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700">
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <form className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <input type="text" defaultValue={editingData.user} placeholder="User" className="border px-4 py-2 rounded" />
+                  <input type="text" defaultValue={editingData.service} placeholder="Service" className="border px-4 py-2 rounded" />
+                  <input type="text" defaultValue={editingData.provider} placeholder="Provider" className="border px-4 py-2 rounded" />
+                  <input type="text" defaultValue={editingData.issue} placeholder="Issue" className="border px-4 py-2 rounded" />
+                </div>
+                <textarea defaultValue={editingData.description} placeholder="Description" className="w-full border px-4 py-2 rounded h-24"></textarea>
+                <div className="flex justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={closeAllModals}
+                    className="px-4 py-2 rounded border border-gray-300"
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">
+                    {editComplaintId !== null ? "Update" : "Submit"}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
         </div>
-        <div className="flex space-x-2">
-          <button className="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
-            Previous
-          </button>
-          <button className="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">
-            Next
-          </button>
-        </div>
-      </div>
+      )}
     </div>
   )
+}
+
+function getStatusColor(status) {
+  return {
+    Open: "bg-red-100 text-red-800",
+    "In Progress": "bg-yellow-100 text-yellow-800",
+    Resolved: "bg-green-100 text-green-800",
+  }[status] || "bg-gray-100 text-gray-800"
+}
+
+function getPriorityColor(priority) {
+  return {
+    High: "bg-red-100 text-red-800",
+    Medium: "bg-yellow-100 text-yellow-800",
+    Low: "bg-blue-100 text-blue-800",
+  }[priority] || "bg-gray-100 text-gray-800"
 }
