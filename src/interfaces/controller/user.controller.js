@@ -35,7 +35,7 @@ const AuthController = (authUseCases, userRepo) => ({
   // ========== CREATE METHODS ==========
 
   createUser: async (req, res) => {
-    console.log("Available useCase methods:", Object.keys(useCases));
+    // console.log("Available useCase methods:", Object.keys(useCases));
     try {
       const user = await userRepo.createUser(req.body);
       res.status(201).json({ success: true, data: user });

@@ -176,42 +176,50 @@ export function Complaints() {
               <button onClick={closeAllModals} className="text-gray-500 hover:text-red-500 text-xl">×</button>
             </div>
             {deleteComplaintId !== null ? (
-              <div className="space-y-4">
-                <p>Are you sure you want to delete this complaint?</p>
-                <div className="flex justify-end gap-3">
-                  <button
-                    onClick={closeAllModals}
-                    className="px-4 py-2 rounded border border-gray-300"
-                  >
-                    Cancel
-                  </button>
-                  <button className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700">
-                    Delete
-                  </button>
-                </div>
-              </div>
+               <div className="space-y-4">
+    <p>
+      Do you want to delete the complaint of <strong>{getComplaintData(deleteComplaintId).user}</strong>?
+    </p>
+    <div className="flex justify-end gap-3">
+      <button
+        onClick={closeAllModals}
+        className="px-4 py-2 rounded border border-gray-300"
+      >
+        Cancel
+      </button>
+      <button className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700">
+        Delete
+      </button>
+    </div>
+  </div>
+
             ) : (
-              <form className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <input type="text" defaultValue={editingData.user} placeholder="User" className="border px-4 py-2 rounded" />
-                  <input type="text" defaultValue={editingData.service} placeholder="Service" className="border px-4 py-2 rounded" />
-                  <input type="text" defaultValue={editingData.provider} placeholder="Provider" className="border px-4 py-2 rounded" />
-                  <input type="text" defaultValue={editingData.issue} placeholder="Issue" className="border px-4 py-2 rounded" />
-                </div>
-                <textarea defaultValue={editingData.description} placeholder="Description" className="w-full border px-4 py-2 rounded h-24"></textarea>
-                <div className="flex justify-end gap-3">
-                  <button
-                    type="button"
-                    onClick={closeAllModals}
-                    className="px-4 py-2 rounded border border-gray-300"
-                  >
-                    Cancel
-                  </button>
-                  <button type="submit" className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">
-                    {editComplaintId !== null ? "Update" : "Submit"}
-                  </button>
-                </div>
-              </form>
+             <form className="space-y-4">
+  <div className="grid grid-cols-2 gap-4">
+    <input type="text" defaultValue={editingData.user} placeholder="User" className="border px-4 py-2 rounded" />
+    <input type="text" defaultValue={editingData.service} placeholder="Service" className="border px-4 py-2 rounded" />
+    <input type="text" defaultValue={editingData.provider} placeholder="Provider" className="border px-4 py-2 rounded" />
+    <input type="text" defaultValue={editingData.issue} placeholder="Issue" className="border px-4 py-2 rounded" />
+    <select defaultValue={editingData.status || "Open"} className="border px-4 py-2 rounded">
+      <option value="Open">Open</option>
+      <option value="In Progress">In Progress</option>
+      <option value="Resolved">Resolved</option>
+    </select>
+    <select defaultValue={editingData.priority || "Medium"} className="border px-4 py-2 rounded">
+      <option value="High">High</option>
+      <option value="Medium">Medium</option>
+      <option value="Low">Low</option>
+    </select>
+  </div>
+  <textarea defaultValue={editingData.description} placeholder="Description" className="w-full border px-4 py-2 rounded h-24"></textarea>
+  <div className="flex justify-end gap-3">
+    <button type="button" onClick={closeAllModals} className="px-4 py-2 rounded border border-gray-300">Cancel</button>
+    <button type="submit" className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">
+      {editComplaintId !== null ? "Update" : "Submit"}
+    </button>
+  </div>
+</form>
+
             )}
           </div>
         </div>

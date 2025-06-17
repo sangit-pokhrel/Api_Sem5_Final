@@ -18,32 +18,32 @@ import { Users, ShoppingCart, DollarSign, TrendingUp } from "lucide-react"
 const statsData = [
   {
     title: "Total Users",
-    value: "12,345",
-    change: "+12%",
+    value: "10",
+    change: "89%",
     changeType: "positive",
     icon: Users,
     color: "bg-blue-500",
   },
   {
     title: "Total Orders",
-    value: "8,432",
-    change: "+8%",
+    value: "0",
+    change: "0%",
     changeType: "positive",
     icon: ShoppingCart,
     color: "bg-green-500",
   },
   {
     title: "Revenue",
-    value: "$45,678",
-    change: "+15%",
+    value: "Nrs. 0",
+    change: "0%",
     changeType: "positive",
     icon: DollarSign,
     color: "bg-purple-500",
   },
   {
     title: "Growth Rate",
-    value: "23.5%",
-    change: "-2%",
+    value: "0%",
+    change: "0%",
     changeType: "negative",
     icon: TrendingUp,
     color: "bg-orange-500",
@@ -51,18 +51,17 @@ const statsData = [
 ]
 
 const chartData = [
-  { label: "Jan", value: 4000 },
-  { label: "Feb", value: 3000 },
-  { label: "Mar", value: 5000 },
-  { label: "Apr", value: 4500 },
-  { label: "May", value: 6000 },
-  { label: "Jun", value: 5500 },
+  { label: "Jan", value: 0 },
+  { label: "Feb", value: 0 },
+  { label: "Mar", value: 0 },
+  { label: "Apr", value: 0 },
+  { label: "May", value: 0 },
 ]
 
 const trafficData = [
-  { label: "Desktop", value: 65 },
-  { label: "Mobile", value: 30 },
-  { label: "Tablet", value: 5 },
+  { label: "Desktop", value: 30 },
+  { label: "Mobile", value: 10 },
+  { label: "Tablet", value: 0 },
 ]
 
 export default function Dashboard() {

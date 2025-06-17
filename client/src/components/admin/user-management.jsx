@@ -1,8 +1,12 @@
 "use client"
 
 import { useState } from "react"
+import axios from "axios"
 import { Search, MoreHorizontal, Edit, Trash2, UserPlus, Filter, X, Eye, Star } from "lucide-react"
 import { Toaster, toast } from "react-hot-toast"
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 // Sample user data based on your User model
 const users = [
   {
@@ -96,7 +100,59 @@ const users = [
   },
 ]
 
-export function UserManagement() {
+import { useLoadScript, Autocomplete } from "@react-google-maps/api";
+const libraries = ["places"];
+
+
+
+const schema = yup.object().shape({
+  fullname: yup.string().required("Full name is required"),
+  username: yup.string().required("Username is required"),
+  email: yup.string().email().required("Email is required"),
+  password: yup.string().min(6).required("Password is required"),
+  phonenumber: yup.string().required("Phone number is required"),
+  ctznNo: yup.string(),
+  country: yup.string(),
+  province: yup.string().required("Province is required"),
+  city: yup.string(),
+  address: yup.string().required("Address is required"),
+  profilepic: yup.string(),
+  rating: yup.number().min(0).max(5),
+  role: yup.string().required("Role is required"),
+  status: yup.string().required("Status is required"),
+  experienceYears: yup.number().when("role", {
+    is: "Service Provider",
+    then: yup.number().required("Experience years required")
+  }),
+  shopName: yup.string().when("role", {
+    is: "Service Provider",
+    then: yup.string().required("Shop name required")
+  }),
+  shopLocation: yup.string().when("role", {
+    is: "Service Provider",
+    then: yup.string().required("Shop location required")
+  }),
+  minimumCharge: yup.number().when("role", {
+    is: "Service Provider",
+    then: yup.number().required("Minimum charge required")
+  }),
+  serviceType: yup.string().when("role", {
+    is: "Service Provider",
+    then: yup.string().required("Service type required")
+  }),
+  serviceField: yup.string().when("role", {
+    is: "Service Provider",
+    then: yup.string().required("Service field required")
+  })
+});
+
+const inputClass = "p-2 border rounded-md w-full";
+  const errorClass = "text-sm text-red-500";
+
+
+
+
+export function UserManagement( {onSubmit}) {
     const [showActions, setShowActions] = useState(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedRole, setSelectedRole] = useState("All")
@@ -105,26 +161,34 @@ export function UserManagement() {
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [showViewModal, setShowViewModal] = useState(false)
   const [selectedUser, setSelectedUser] = useState(null)
-  const [formData, setFormData] = useState({
-    fullname: "",
-    username: "",
-    email: "",
-    address: "",
-    ctznNo: "",
-    country: "",
-    province: "",
-    city: "",
-    phonenumber: "",
-    role: "Customer",
-    status: "Active",
-    experienceYears: "",
-    shopName: "",
-    shopLocation: "",
-    minimumCharge: "",
-    serviceType: "",
-    serviceField: "",
-    comments: "",
-  })
+
+    const initialFormData = {
+  fullname: "",
+  username: "",
+  email: "",
+  password: "",
+  address: "",
+  ctznNo: "",
+  country: "",
+  province: "",
+  city: "",
+  phonenumber: "",
+  role: "",
+  status: "Active",
+  experienceYears: "",
+  shopName: "",
+  shopLocation: "",
+  minimumCharge: "",
+  serviceType: "",
+  serviceField: "",
+
+
+  
+}
+
+  const [formData, setFormData] = useState({ ...initialFormData })
+
+
 
   const filteredUsers = users.filter(
     (user) =>
@@ -159,41 +223,85 @@ export function UserManagement() {
   }
 
   const handleEditUser = (user) => {
-    setSelectedUser(user)
-    setFormData({
-      fullname: user.fullname,
-      username: user.username,
-      email: user.email,
-      address: user.address,
-      ctznNo: user.ctznNo,
-      country: user.country,
-      province: user.province,
-      city: user.city,
-      phonenumber: user.phonenumber,
-      role: user.role,
-      status: user.status,
-      experienceYears: user.experienceYears || "",
-      shopName: user.shopName || "",
-      shopLocation: user.shopLocation || "",
-      minimumCharge: user.minimumCharge || "",
-      serviceType: user.serviceType || "",
-      serviceField: user.serviceField || "",
-      comments: user.comments || "",
-    })
-    setShowEditModal(true)
+  setSelectedUser(user);
+  setFormData({
+    fullname: user.fullname,
+    username: user.username,
+    email: user.email,
+    address: user.address,
+    ctznNo: user.ctznNo,
+    country: user.country,
+    province: user.province,
+    city: user.city,
+    phonenumber: user.phonenumber,
+    role: user.role,
+    status: user.status,
+    experienceYears: user.experienceYears || "",
+    shopName: user.shopName || "",
+    shopLocation: user.shopLocation || "",
+    minimumCharge: user.minimumCharge || "",
+    serviceType: user.serviceType || "",
+    serviceField: user.serviceField || "",
+    comments: user.comments || "",
+  });
+
+  // 🧠 Sync fields with react-hook-form values
+  setValue("fullname", user.fullname);
+  setValue("username", user.username);
+  setValue("email", user.email);
+  setValue("password", ""); // leave password blank intentionally
+  setValue("phonenumber", user.phonenumber);
+  setValue("ctznNo", user.ctznNo || "");
+  setValue("country", user.country || "");
+  setValue("province", user.province || "");
+  setValue("city", user.city || "");
+  setValue("address", user.address || "");
+  setValue("role", user.role || "");
+  setValue("status", user.status || "");
+
+  // Only if Service Provider
+  if (user.role === "Service Provider") {
+    setValue("experienceYears", user.experienceYears || "");
+    setValue("shopName", user.shopName || "");
+    setValue("shopLocation", user.shopLocation || "");
+    setValue("minimumCharge", user.minimumCharge || "");
+    setValue("serviceType", user.serviceType || "");
+    setValue("serviceField", user.serviceField || "");
   }
+
+  setShowEditModal(true);
+};
 
   const handleDeleteUser = (user) => {
     setSelectedUser(user)
     setShowDeleteModal(true)
   }
 
-  const handleFormSubmit = (e) => {
-    e.preventDefault()
-    toast.success(showAddModal ? "User added successfully!" : "User updated successfully!")
-    setShowAddModal(false)
-    setShowEditModal(false)
-  }
+// const handleSubmit = async (e) => {
+//   e.preventDefault()
+
+//   const payload = {
+//     username: formData.username,
+//     email: formData.email,
+//     first_name: formData.fullname.split(" ")[0] || "", // or use separate fields
+//     last_name: formData.fullname.split(" ")[1] || "",
+//     is_superuser: false,
+//     is_active: formData.status === "Active",
+//     is_staff: formData.role === "Service Provider",
+//     groups: formData.role,
+//     password: formData.password,
+//   }
+
+//   try {
+//     const res = await axios.post("http://localhost:3000/api/auth/", payload)
+//     toast.success("User added successfully!")
+//     setShowAddModal(false)
+//     setFormData({ ...initialFormData }) // reset formData
+//   } catch (err) {
+//     console.error(err)
+//     toast.error("Failed to add user.")
+//   }
+// }
 
   const handleDeleteConfirm = () => {
     toast.success(`User ${selectedUser.fullname} deleted successfully!`)
@@ -215,6 +323,46 @@ export function UserManagement() {
     setShowViewModal(false)
     setSelectedUser(null)
   }
+
+  const handleUserSubmit = async (data) => {
+  try {
+    // Optional: log to verify
+    console.log("Form Submitted Data:", data);
+
+    const response = await axios.post("http://localhost:3000/api/auth", data);
+
+    toast.success("User created successfully!");
+    // Optionally reset modal or form if needed here
+  } catch (error) {
+    console.error("Submission Error:", error);
+    toast.error("Failed to create user.");
+  }
+};
+
+
+
+   const { isLoaded } = useLoadScript({
+    googleMapsApiKey: 'AIzaSyDUO3oOP7ICjWw3Kv8jfh-n0JgynO-iPeM',
+    libraries,
+  });
+
+  const [autocomplete, setAutocomplete] = useState(null);
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm({ resolver: yupResolver(schema) });
+
+  const role = watch("role");
+
+  const handlePlaceSelect = () => {
+    const place = autocomplete.getPlace();
+    setValue("address", place.formatted_address);
+  };
+
+
 
   return (
     <>
@@ -264,39 +412,43 @@ export function UserManagement() {
         </div>
        <div className="overflow-x-auto rounded-xl shadow-md mt-6">
             <table className="min-w-full text-sm border-collapse">
-              <thead className="bg-white/70 backdrop-blur-md border-b">
-                <tr className="text-left text-gray-700">
-                  <th className="p-4 font-medium">Full Name</th>
-                  <th className="p-4 font-medium">Username</th>
-                  <th className="p-4 font-medium">Email</th>
-                  <th className="p-4 font-medium">Phone</th>
-                  <th className="p-4 font-medium">Role</th>
-                  <th className="p-4 font-medium">Status</th>
-                  <th className="p-4 font-medium">Rating</th>
-                  <th className="p-4 font-medium">City</th>
-                  <th className="p-4 font-medium">Country</th>
-                  <th className="p-4 font-medium text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredUsers.map((user, index) => (
-                  <tr key={index} className="even:bg-white odd:bg-gray-50 hover:bg-gray-100">
-                    <td className="p-4 font-medium text-gray-900">{user.fullname}</td>
-                    <td className="p-4">{user.username}</td>
-                    <td className="p-4">{user.email}</td>
-                    <td className="p-4">{user.phonenumber}</td>
-                    <td className="p-4">{user.role}</td>
-                    <td className="p-4">{user.status}</td>
-                    <td className="p-4">{user.rating}</td>
-                    <td className="p-4">{user.city}</td>
-                    <td className="p-4">{user.country}</td>
-                    <td className="p-4 text-right">
-                      <button onClick={() => handleEditUser(user)} className="text-blue-600 hover:underline mr-2">Edit</button>
-                      <button onClick={() => handleDeleteUser(user)} className="text-red-600 hover:underline">Delete</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
+            <thead className="bg-white/70 backdrop-blur-md border-b">
+  <tr className="text-left text-gray-700">
+    <th className="p-4 font-medium">Full Name</th>
+    <th className="p-4 font-medium">Username</th>
+    <th className="p-4 font-medium">Email</th>
+    <th className="p-4 font-medium">Phone</th>
+    <th className="p-4 font-medium">Role</th>
+    <th className="p-4 font-medium">Status</th>
+    <th className="p-4 font-medium">Province</th>
+    <th className="p-4 font-medium">City</th>
+    <th className="p-4 font-medium">Address</th>
+    <th className="p-4 font-medium">Service Type</th>
+    <th className="p-4 font-medium text-right">Actions</th>
+  </tr>
+</thead>
+
+             <tbody>
+  {filteredUsers.map((user, index) => (
+    <tr key={index} className="even:bg-white odd:bg-gray-50 hover:bg-gray-100">
+      <td className="p-4 font-medium text-gray-900">{user.fullname}</td>
+      <td className="p-4">{user.username}</td>
+      <td className="p-4">{user.email}</td>
+      <td className="p-4">{user.phonenumber}</td>
+      <td className="p-4">{user.role}</td>
+      <td className="p-4">{user.status}</td>
+      <td className="p-4">{user.province}</td>
+      <td className="p-4">{user.city}</td>
+      <td className="p-4">{user.address}</td>
+      <td className="p-4">{user.serviceType || "-"}</td>
+      <td className="p-4 text-right">
+        <button onClick={() => handleEditUser(user)} className="text-blue-600 hover:underline mr-2">Edit</button>
+        <button onClick={() => handleDeleteUser(user)} className="text-red-600 hover:underline">Delete</button>
+      </td>
+    </tr>
+  ))}
+</tbody>
+
             </table>
           </div>
 
@@ -735,43 +887,7 @@ export function UserManagement() {
         </div>
       )}
 
-      {/* Delete Confirmation Modal
-      {showDeleteModal && selectedUser && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
-            <div className="p-6">
-              <div className="flex items-center mb-4">
-                <div className="bg-red-100 rounded-full p-3 mr-4">
-                  <Trash2 className="text-red-600" size={24} />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">Delete User</h3>
-                  <p className="text-gray-600">This action cannot be undone</p>
-                </div>
-              </div>
-              <p className="text-gray-700 mb-6">
-                Are you sure you want to delete <strong>{selectedUser.fullname}</strong>? This will permanently remove
-                the user and all associated data.
-              </p>
-              <div className="flex justify-end space-x-3">
-                <button
-                  onClick={closeAllModals}
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleDeleteConfirm}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-                >
-                  Delete User
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )} */}
-
+     
 
    {(showAddModal || showEditModal) && (
   <div className="absolute top-10 left-1/2 z-50 -translate-x-1/2 w-full max-w-6xl bg-white/80 backdrop-blur-md border border-gray-200 shadow-xl rounded-xl p-6">
@@ -781,56 +897,112 @@ export function UserManagement() {
         <X size={22} className="text-gray-600" />
       </button>
     </div>
-    <form onSubmit={handleFormSubmit} className="grid grid-cols-1 md:grid-cols-4 gap-4 auto-rows-fr">
-      {/* Required fields */}
-      <input name="fullname" value={formData.fullname} onChange={handleInputChange} placeholder="Full Name *" required className="p-2 border rounded-md" />
-      <input name="username" value={formData.username} onChange={handleInputChange} placeholder="Username *" required className="p-2 border rounded-md" />
-      <input type="email" name="email" value={formData.email} onChange={handleInputChange} placeholder="Email *" required className="p-2 border rounded-md" />
-      <input type="password" name="password" value={formData.password} onChange={handleInputChange} placeholder="Password *" required className="p-2 border rounded-md" />
-      <input type="tel" name="phonenumber" value={formData.phonenumber} onChange={handleInputChange} placeholder="Phone Number *" required className="p-2 border rounded-md" />
+   <form onSubmit={handleUserSubmit} className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div>
+        <input placeholder="Full Name" {...register("fullname")} className={inputClass} />
+        {errors.fullname && <p className={errorClass}>{errors.fullname.message}</p>}
+      </div>
+      <div>
+        <input placeholder="Username" {...register("username")} className={inputClass} />
+        {errors.username && <p className={errorClass}>{errors.username.message}</p>}
+      </div>
+      <div>
+        <input type="email" placeholder="Email" {...register("email")} className={inputClass} />
+        {errors.email && <p className={errorClass}>{errors.email.message}</p>}
+      </div>
+      <div>
+        <input type="password" placeholder="Password" {...register("password")} className={inputClass} />
+        {errors.password && <p className={errorClass}>{errors.password.message}</p>}
+      </div>
+      <div>
+        <input placeholder="Phone Number" {...register("phonenumber")} className={inputClass} />
+        {errors.phonenumber && <p className={errorClass}>{errors.phonenumber.message}</p>}
+      </div>
+      <div>
+        <input placeholder="Citizen Number" {...register("ctznNo")} className={inputClass} />
+      </div>
+      <div>
+        <input placeholder="Country" {...register("country")} className={inputClass} />
+      </div>
+      <div>
+        <select {...register("province")} className={inputClass}>
+          <option value="">Select Province</option>
+          <option value="Province 1">Province 1</option>
+          <option value="Madhesh">Madhesh</option>
+          <option value="Bagmati">Bagmati</option>
+          <option value="Gandaki">Gandaki</option>
+          <option value="Lumbini">Lumbini</option>
+          <option value="Karnali">Karnali</option>
+          <option value="Sudurpashchim">Sudurpashchim</option>
+        </select>
+        {errors.province && <p className={errorClass}>{errors.province.message}</p>}
+      </div>
+      <div>
+        <input placeholder="City" {...register("city")} className={inputClass} />
+      </div>
 
-      {/* Optional fields */}
-      <input name="ctznNo" value={formData.ctznNo} onChange={handleInputChange} placeholder="Citizen Number" className="p-2 border rounded-md" />
-      <input name="country" value={formData.country} onChange={handleInputChange} placeholder="Country" className="p-2 border rounded-md" />
-      <input name="province" value={formData.province} onChange={handleInputChange} placeholder="Province" className="p-2 border rounded-md" />
-      <input name="city" value={formData.city} onChange={handleInputChange} placeholder="City" className="p-2 border rounded-md" />
-      <input name="address" value={formData.address} onChange={handleInputChange} placeholder="Address" className="p-2 border rounded-md" />
-      <input name="profilepic" value={formData.profilepic} onChange={handleInputChange} placeholder="Profile Pic URL" className="p-2 border rounded-md" />
-      <input name="rating" value={formData.rating} onChange={handleInputChange} placeholder="Rating" type="number" min="0" max="5" step="0.1" className="p-2 border rounded-md" />
+      {isLoaded && (
+        <div className="md:col-span-2">
+          <Autocomplete onLoad={setAutocomplete} onPlaceChanged={handlePlaceSelect}>
+            <input placeholder="Address" {...register("address")} className={inputClass} />
+          </Autocomplete>
+          {errors.address && <p className={errorClass}>{errors.address.message}</p>}
+        </div>
+      )}
 
-      {/* Dropdowns */}
-      <select name="role" value={formData.role} onChange={handleInputChange} className="p-2 border rounded-md" required>
-        <option value="Customer">Customer</option>
-        <option value="Service Provider">Service Provider</option>
-      </select>
-      <select name="status" value={formData.status} onChange={handleInputChange} className="p-2 border rounded-md" required>
-        <option value="Active">Active</option>
-        <option value="Inactive">Inactive</option>
-      </select>
+    
+     
 
-      {/* Additional metadata */}
-      <input type="text" name="lastLoginIp" onChange={handleInputChange} placeholder="Last Login IP" className="p-2 border rounded-md" />
-      <input type="text" name="lastLoginLocation" onChange={handleInputChange} placeholder="Login Location" className="p-2 border rounded-md" />
-      <input type="text" name="lastLoginDevice" onChange={handleInputChange} placeholder="Device" className="p-2 border rounded-md" />
-      <input type="datetime-local" name="lastLogin" onChange={handleInputChange} className="p-2 border rounded-md" />
-      <input type="datetime-local" name="createdAt" onChange={handleInputChange} className="p-2 border rounded-md" />
-      <input type="datetime-local" name="updatedAt" onChange={handleInputChange} className="p-2 border rounded-md" />
+      <div>
+        <select {...register("role")} className={inputClass}>
+          <option value="">Select Role</option>
+          <option value="Customer">Customer</option>
+          <option value="Service Provider">Service Provider</option>
+        </select>
+        {errors.role && <p className={errorClass}>{errors.role.message}</p>}
+      </div>
+      <div>
+        <select {...register("status")} className={inputClass}>
+          <option value="Active">Active</option>
+          <option value="Inactive">Inactive</option>
+        </select>
+        {errors.status && <p className={errorClass}>{errors.status.message}</p>}
+      </div>
 
-      {/* Service stats */}
-      <input type="number" name="totalServiceRequests" onChange={handleInputChange} placeholder="Total Requests" className="p-2 border rounded-md" />
-      <input type="number" name="totalServiceCompleted" onChange={handleInputChange} placeholder="Completed" className="p-2 border rounded-md" />
-      <input type="number" name="totalServicePending" onChange={handleInputChange} placeholder="Pending" className="p-2 border rounded-md" />
-      <input type="number" name="totalServiceInProgress" onChange={handleInputChange} placeholder="In Progress" className="p-2 border rounded-md" />
-      <input type="number" name="totalServiceCancelled" onChange={handleInputChange} placeholder="Cancelled" className="p-2 border rounded-md" />
+      {role === "Service Provider" && (
+        <>
+          <div>
+            <input placeholder="Experience Years" type="number" {...register("experienceYears")} className={inputClass} />
+            {errors.experienceYears && <p className={errorClass}>{errors.experienceYears.message}</p>}
+          </div>
+          <div>
+            <input placeholder="Shop Name" {...register("shopName")} className={inputClass} />
+            {errors.shopName && <p className={errorClass}>{errors.shopName.message}</p>}
+          </div>
+          <div>
+            <input placeholder="Shop Location" {...register("shopLocation")} className={inputClass} />
+            {errors.shopLocation && <p className={errorClass}>{errors.shopLocation.message}</p>}
+          </div>
+          <div>
+            <input placeholder="Minimum Charge" type="number" {...register("minimumCharge")} className={inputClass} />
+            {errors.minimumCharge && <p className={errorClass}>{errors.minimumCharge.message}</p>}
+          </div>
+          <div>
+            <input placeholder="Service Type" {...register("serviceType")} className={inputClass} />
+            {errors.serviceType && <p className={errorClass}>{errors.serviceType.message}</p>}
+          </div>
+          <div>
+            <input placeholder="Service Field" {...register("serviceField")} className={inputClass} />
+            {errors.serviceField && <p className={errorClass}>{errors.serviceField.message}</p>}
+          </div>
+        </>
+      )}
 
-      {/* Footer buttons */}
-      <div className="md:col-span-4 flex justify-end gap-4 mt-4">
-        <button type="button" onClick={closeAllModals} className="px-4 py-2 bg-gray-200 rounded-md">Cancel</button>
-        <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-md">
-          {showAddModal ? "Add User" : "Update User"}
-        </button>
+      <div className="md:col-span-4 flex justify-end gap-4">
+        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-md">Submit</button>
       </div>
     </form>
+
   </div>
 )}
 
