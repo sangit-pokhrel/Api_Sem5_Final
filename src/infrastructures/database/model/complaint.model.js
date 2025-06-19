@@ -11,11 +11,10 @@ const ComplaintSchema = new mongoose.Schema(
     providerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
     },
-    requestId: {
+    requesterId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "ServiceRequest",
+      // ref: "ServiceRequest",
       required: true,
     },
     description: {
@@ -24,13 +23,13 @@ const ComplaintSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Pending", "Resolved", "Rejected"],
-      default: "Pending",
+      enum: ["Open", "Pending", "On Hold", "Rejected", "Solved"],
+      default: "Open",
     },
     priority: {
       type: String,
       enum: ["High", "Medium", "Low"],
-      default: "Medium",
+      default: "Low",
     },
   },
   { timestamps: true }

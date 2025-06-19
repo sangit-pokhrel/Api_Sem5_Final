@@ -45,6 +45,7 @@ const ComplaintController = (useCases) => ({
       res.status(400).json({ success: false, message: err.message });
     }
   },
+
   remove: async (req, res) => {
     try {
       await useCases.deleteComplaintById(req.params.id);
