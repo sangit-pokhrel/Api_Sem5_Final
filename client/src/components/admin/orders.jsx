@@ -67,7 +67,7 @@ const orders = [
   },
 ]
 
-export function Orders() {
+export default function Orders() {
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("All")
   const [showActions, setShowActions] = useState(null)

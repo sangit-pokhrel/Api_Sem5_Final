@@ -5,7 +5,7 @@ import axios from "axios"
 import { toast, Toaster } from "react-hot-toast"
 import { Shield, ArrowLeft, Loader2, RefreshCw } from "lucide-react"
 
-export function ForgotPasswordOTP({ email, onVerify, onBack, onResend, isLoading }) {
+export default function ForgotPasswordOTP({ email, onVerify, onBack, onResend, isLoading }) {
   const [otp, setOtp] = useState("")
   const [error, setError] = useState("")
   const [timeLeft, setTimeLeft] = useState(300)
@@ -90,9 +90,8 @@ export function ForgotPasswordOTP({ email, onVerify, onBack, onResend, isLoading
             value={otp}
             onChange={(e) => setOtp(e.target.value)}
             placeholder=""
-            className={`w-full text-center text-xl tracking-widest font-semibold py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
-              error ? "border-red-500" : "border-gray-300"
-            }`}
+            className={`w-full text-center text-xl tracking-widest font-semibold py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 ${error ? "border-red-500" : "border-gray-300"
+              }`}
             disabled={isLoading}
           />
           {error && <p className="text-sm text-red-600 text-center mt-2">{error}</p>}

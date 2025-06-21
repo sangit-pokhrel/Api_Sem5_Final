@@ -1,11 +1,9 @@
-"use client"
-
 import { useState } from "react"
 import axios from "axios"
 import { Mail, ArrowLeft, Loader2 } from "lucide-react"
 import { toast } from "react-hot-toast"
 
-export function ForgotPasswordEmail({ onSubmit, isLoading: loadingFromParent }) {
+export default function ForgotPasswordEmail({ onSubmit, isLoading: loadingFromParent }) {
   const [email, setEmail] = useState("")
   const [errors, setErrors] = useState({})
   const [isLoading, setIsLoading] = useState(false)
@@ -15,44 +13,44 @@ export function ForgotPasswordEmail({ onSubmit, isLoading: loadingFromParent }) 
     return emailRegex.test(email)
   }
 
-const handleSubmit = async (e) => {
-  e.preventDefault()
-  const newErrors = {}
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    const newErrors = {}
 
-  if (!email) {
-    newErrors.email = "Email is required"
-  } else if (!validateEmail(email)) {
-    newErrors.email = "Please enter a valid email address"
-  }
-
-  setErrors(newErrors)
-
-  if (Object.keys(newErrors).length > 0) return
-
-  try {
-    setIsLoading(true)
-
-    const res = await axios.post("http://localhost:3000/api/forgot/email", {
-      email,
-      role: "User", // Adjust role as needed
-    })
-
-    const { userId, otpSent } = res.data
-
-    if (otpSent) {
-      sessionStorage.setItem("userId", userId)
-      sessionStorage.setItem("email", email)
-      toast.success("📨 OTP sent to your email")
-      onSubmit(email)
-    } else {
-      toast.error("Failed to send OTP.")
+    if (!email) {
+      newErrors.email = "Email is required"
+    } else if (!validateEmail(email)) {
+      newErrors.email = "Please enter a valid email address"
     }
-  } catch (err) {
-    toast.error(err?.response?.data?.error || "❌ Failed to send OTP")
-  } finally {
-    setIsLoading(false)
+
+    setErrors(newErrors)
+
+    if (Object.keys(newErrors).length > 0) return
+
+    try {
+      setIsLoading(true)
+
+      const res = await axios.post("http://localhost:3000/api/forgot/email", {
+        email,
+        role: "User", // Adjust role as needed
+      })
+
+      const { userId, otpSent } = res.data
+
+      if (otpSent) {
+        sessionStorage.setItem("userId", userId)
+        sessionStorage.setItem("email", email)
+        toast.success("📨 OTP sent to your email")
+        onSubmit(email)
+      } else {
+        toast.error("Failed to send OTP.")
+      }
+    } catch (err) {
+      toast.error(err?.response?.data?.error || "❌ Failed to send OTP")
+    } finally {
+      setIsLoading(false)
+    }
   }
-}
 
   return (
     <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
@@ -79,9 +77,8 @@ const handleSubmit = async (e) => {
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className={`w-full px-4 py-3 pl-12 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-                errors.email ? "border-red-500" : "border-gray-300"
-              }`}
+              className={`w-full px-4 py-3 pl-12 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${errors.email ? "border-red-500" : "border-gray-300"
+                }`}
               placeholder="Enter your email address"
               disabled={isLoading || loadingFromParent}
             />

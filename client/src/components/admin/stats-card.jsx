@@ -1,6 +1,6 @@
 import { TrendingUp, TrendingDown } from "lucide-react"
 
-export function StatsCard({ title, value, change, changeType, icon: Icon, color }) {
+export default function StatsCard({ title, value, change, changeType, icon: Icon, color }) {
   const isPositive = changeType === "positive"
 
   return (

@@ -57,7 +57,7 @@ const payments = [
   },
 ]
 
-export function Payments() {
+export default function Payments() {
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("All")
   const [showActions, setShowActions] = useState(null)

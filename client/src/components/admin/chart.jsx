@@ -1,4 +1,4 @@
-export function SimpleChart({ data, title }) {
+export default function SimpleChart({ data, title }) {
   const maxValue = Math.max(...data.map((item) => item.value))
 
   return (

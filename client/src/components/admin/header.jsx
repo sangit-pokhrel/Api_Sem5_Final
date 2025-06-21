@@ -3,7 +3,7 @@
 import { Search, Bell, User, ChevronDown } from "lucide-react"
 import { useState } from "react"
 
-export function Header() {
+export default function Header() {
   const [showNotifications, setShowNotifications] = useState(false)
   const [showProfile, setShowProfile] = useState(false)
 

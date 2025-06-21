@@ -70,7 +70,7 @@ export default function LoginPage() {
       }
 
       toast.success("🎉 Login successful!")
-      window.location.href = "/dashboard"
+      window.location.href = "/dashboard/home"
     } catch (error) {
       const message = error.response?.data?.message || "Login failed"
       toast.error(`❌ ${message}`)

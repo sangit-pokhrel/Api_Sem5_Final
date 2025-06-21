@@ -1,4 +1,5 @@
 "use client"
+
 import {
   Home,
   Users,
@@ -13,19 +14,25 @@ import {
   ChevronRight,
   PenToolIcon as Tool,
 } from "lucide-react"
+import { useLocation, useNavigate } from "react-router-dom"
 
 const menuItems = [
-  { icon: Home, label: "Dashboard", active: true },
-  { icon: Users, label: "User Management", active: false },
-  { icon: Star, label: "Reviews", active: false },
-  { icon: AlertCircle, label: "Complaints", active: false },
-  { icon: BarChart3, label: "Analytics", active: false },
-  { icon: CreditCard, label: "Payments", active: false },
-  { icon: ShoppingBag, label: "Orders", active: false },
-  { icon: Settings, label: "Settings", active: false },
+  { icon: Home, label: "Dashboard", path: "home" },
+  { icon: Users, label: "User Management", path: "user-management" },
+  { icon: Star, label: "Reviews", path: "reviews" },
+  { icon: AlertCircle, label: "Complaints", path: "complaints" },
+  { icon: BarChart3, label: "Analytics", path: "analytics" },
+  { icon: CreditCard, label: "Payments", path: "payments" },
+  { icon: ShoppingBag, label: "Orders", path: "orders" },
+  { icon: Settings, label: "Settings", path: "settings" },
 ]
 
-export function Sidebar({ isCollapsed, setIsCollapsed, activeItem, setActiveItem }) {
+export default function Sidebar({ isCollapsed, setIsCollapsed }) {
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  const getCurrentPath = location.pathname.split("/")[2] // "dashboard/complaints" => "complaints"
+
   return (
     <div
       className={`bg-gray-900 text-white transition-all duration-300 flex flex-col ${isCollapsed ? "w-16" : "w-64"} min-h-screen`}
@@ -55,12 +62,11 @@ export function Sidebar({ isCollapsed, setIsCollapsed, activeItem, setActiveItem
           {menuItems.map((item) => (
             <li key={item.label}>
               <button
-                onClick={() => setActiveItem(item.label)}
-                className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
-                  activeItem === item.label
-                    ? "bg-blue-600 text-white"
-                    : "text-gray-300 hover:bg-gray-700 hover:text-white"
-                }`}
+                onClick={() => navigate(`/dashboard/${item.path}`)}
+                className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${getCurrentPath === item.path
+                  ? "bg-blue-600 text-white"
+                  : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                  }`}
               >
                 <item.icon size={20} />
                 {!isCollapsed && <span>{item.label}</span>}
@@ -70,11 +76,14 @@ export function Sidebar({ isCollapsed, setIsCollapsed, activeItem, setActiveItem
         </ul>
       </nav>
 
-      {/* Logout Button */}
+      {/* Logout */}
       <div className="p-4 border-t border-gray-700 flex justify-center">
         <button
           className="flex items-center space-x-2 px-4 py-2 rounded-lg text-gray-300 hover:bg-red-600 hover:text-white transition-colors"
-          onClick={() => console.log("Logout clicked")}
+          onClick={() => {
+            sessionStorage.clear()
+            navigate("/login")
+          }}
         >
           <LogOut size={20} />
           {!isCollapsed && <span>Logout</span>}

@@ -349,16 +349,14 @@ export default function AboutPage() {
                   <button
                     key={index}
                     onClick={() => setActiveValue(index)}
-                    className={`w-full text-left p-4 rounded-xl transition-all duration-300 flex items-center space-x-3 ${
-                      activeValue === index
+                    className={`w-full text-left p-4 rounded-xl transition-all duration-300 flex items-center space-x-3 ${activeValue === index
                         ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg"
                         : "bg-white hover:bg-slate-100 text-slate-700 shadow"
-                    }`}
+                      }`}
                   >
                     <div
-                      className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                        activeValue === index ? "bg-white/20" : "bg-blue-100"
-                      }`}
+                      className={`w-10 h-10 rounded-lg flex items-center justify-center ${activeValue === index ? "bg-white/20" : "bg-blue-100"
+                        }`}
                     >
                       <value.icon className={`w-5 h-5 ${activeValue === index ? "text-white" : "text-blue-600"}`} />
                     </div>
@@ -395,7 +393,7 @@ export default function AboutPage() {
                         </div>
                       </div>
 
-                     
+
                     </div>
                   </CardContent>
                 </Card>

@@ -46,7 +46,7 @@ const orders = [
   },
 ]
 
-export function RecentOrders() {
+export default function RecentOrders() {
   const [showActions, setShowActions] = useState(null)
 
   const getStatusColor = (status) => {

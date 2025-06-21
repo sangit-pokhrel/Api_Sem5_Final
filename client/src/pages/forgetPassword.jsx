@@ -1,12 +1,12 @@
 "use client"
 
 import { useState } from "react"
-import { ForgotPasswordEmail } from "./ForgetPasswordEmail"
-import { ForgotPasswordOTP } from "./ForgetPasswordOtp"
-import { ForgotPasswordReset } from "./ForgetPasswordReset"
+import ForgotPasswordEmail  from "./ForgetPasswordEmail"
+import ForgotPasswordOTP  from "./ForgetPasswordOtp"
+import ForgotPasswordReset  from "./ForgetPasswordReset"
 import { toast, Toaster } from "react-hot-toast"
 
-export function ForgotPasswordFlow() {
+export default function ForgotPasswordFlow() {
   const [currentStep, setCurrentStep] = useState(1)
   const [email, setEmail] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -59,27 +59,27 @@ export function ForgotPasswordFlow() {
 
   return (
     <>
-    
-    <Toaster position="top-right" reverseOrder={false} />
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full">
-        {currentStep === 1 && <ForgotPasswordEmail onSubmit={handleEmailSubmit} isLoading={isLoading} />}
 
-        {currentStep === 2 && (
-          <ForgotPasswordOTP
-            email={email}
-            onVerify={handleOTPVerify}
-            onBack={handleBackToEmail}
-            onResend={handleResendOTP}
-            isLoading={isLoading}
-          />
-        )}
+      <Toaster position="top-right" reverseOrder={false} />
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full">
+          {currentStep === 1 && <ForgotPasswordEmail onSubmit={handleEmailSubmit} isLoading={isLoading} />}
 
-        {currentStep === 3 && (
-          <ForgotPasswordReset email={email} onSubmit={handlePasswordReset} isLoading={isLoading} />
-        )}
+          {currentStep === 2 && (
+            <ForgotPasswordOTP
+              email={email}
+              onVerify={handleOTPVerify}
+              onBack={handleBackToEmail}
+              onResend={handleResendOTP}
+              isLoading={isLoading}
+            />
+          )}
+
+          {currentStep === 3 && (
+            <ForgotPasswordReset email={email} onSubmit={handlePasswordReset} isLoading={isLoading} />
+          )}
+        </div>
       </div>
-    </div>
     </>
   )
 }

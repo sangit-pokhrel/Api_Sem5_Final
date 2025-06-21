@@ -136,7 +136,7 @@ export default function HowItWorksPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-white">
       {/* Header */}
-        <header className="border-b bg-white/90 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+      <header className="border-b bg-white/90 backdrop-blur-md sticky top-0 z-50 shadow-sm">
         <div className="max-w-[90%] mx-auto px-6 py-5 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="bg-gradient-to-br from-blue-600 to-blue-700 p-2 rounded-xl">
@@ -160,12 +160,12 @@ export default function HowItWorksPage() {
             >
               How it Works
             </Link>
-            
+
             <Link to="/about" className="text-slate-600 hover:text-blue-600 font-medium transition-colors duration-200">
               About
             </Link>
 
-             <Link
+            <Link
               to="/contactus"
               className="text-slate-600 hover:text-blue-600 font-medium transition-colors duration-200"
             >
@@ -258,11 +258,10 @@ export default function HowItWorksPage() {
             <Button
               key={step.step}
               variant={activeStep === step.step ? "default" : "outline"}
-              className={`transition-all duration-300 ${
-                activeStep === step.step
+              className={`transition-all duration-300 ${activeStep === step.step
                   ? "bg-blue-600 text-white shadow-lg scale-105"
                   : "hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300"
-              }`}
+                }`}
               onClick={() => setActiveStep(step.step)}
             >
               <step.icon className="w-4 h-4 mr-2" />
@@ -278,9 +277,8 @@ export default function HowItWorksPage() {
           {steps.map((step, index) => (
             <div
               key={step.step}
-              className={`flex flex-col lg:flex-row items-center gap-16 ${
-                index % 2 === 1 ? "lg:flex-row-reverse" : ""
-              }`}
+              className={`flex flex-col lg:flex-row items-center gap-16 ${index % 2 === 1 ? "lg:flex-row-reverse" : ""
+                }`}
             >
               {/* Content */}
               <div className="flex-1 space-y-8">

@@ -149,7 +149,7 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-white">
       {/* Header */}
-     <header className="border-b bg-white/90 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+      <header className="border-b bg-white/90 backdrop-blur-md sticky top-0 z-50 shadow-sm">
         <div className="max-w-[90%] mx-auto px-6 py-5 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="bg-gradient-to-br from-blue-600 to-blue-700 p-2 rounded-xl">
@@ -173,12 +173,12 @@ export default function ContactPage() {
             >
               How it Works
             </Link>
-            
+
             <Link to="/about" className="text-slate-600 hover:text-blue-600 font-medium transition-colors duration-200">
               About
             </Link>
 
-             <Link
+            <Link
               to="/contactus"
               className="text-slate-600 hover:text-blue-600 font-medium transition-colors duration-200"
             >

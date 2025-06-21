@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Calendar, ChevronDown, Download } from "lucide-react"
 
-export function Analytics() {
+export default function Analytics() {
   const [timeRange, setTimeRange] = useState("This Month")
   const [showTimeDropdown, setShowTimeDropdown] = useState(false)
 
@@ -224,9 +224,8 @@ export function Analytics() {
                     key={index}
                     className="absolute w-full h-full"
                     style={{
-                      clipPath: `polygon(50% 50%, 50% 0%, ${50 + 50 * Math.cos((rotation + 360 / serviceData.length) * (Math.PI / 180))}% ${
-                        50 - 50 * Math.sin((rotation + 360 / serviceData.length) * (Math.PI / 180))
-                      }%)`,
+                      clipPath: `polygon(50% 50%, 50% 0%, ${50 + 50 * Math.cos((rotation + 360 / serviceData.length) * (Math.PI / 180))}% ${50 - 50 * Math.sin((rotation + 360 / serviceData.length) * (Math.PI / 180))
+                        }%)`,
                       transform: `rotate(${rotation}deg)`,
                       backgroundColor: ["bg-blue-500", "bg-green-500", "bg-yellow-500", "bg-purple-500", "bg-red-500"][
                         index
@@ -244,9 +243,8 @@ export function Analytics() {
             {serviceData.map((item, index) => (
               <div key={index} className="flex items-center mb-3">
                 <div
-                  className={`w-4 h-4 rounded-full mr-2 ${
-                    ["bg-blue-500", "bg-green-500", "bg-yellow-500", "bg-purple-500", "bg-red-500"][index]
-                  }`}
+                  className={`w-4 h-4 rounded-full mr-2 ${["bg-blue-500", "bg-green-500", "bg-yellow-500", "bg-purple-500", "bg-red-500"][index]
+                    }`}
                 ></div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
@@ -255,9 +253,8 @@ export function Analytics() {
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-1.5 mt-1">
                     <div
-                      className={`h-1.5 rounded-full ${
-                        ["bg-blue-500", "bg-green-500", "bg-yellow-500", "bg-purple-500", "bg-red-500"][index]
-                      }`}
+                      className={`h-1.5 rounded-full ${["bg-blue-500", "bg-green-500", "bg-yellow-500", "bg-purple-500", "bg-red-500"][index]
+                        }`}
                       style={{ width: `${item.value}%` }}
                     ></div>
                   </div>

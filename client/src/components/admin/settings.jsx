@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Save, Bell, Shield, User, Palette } from "lucide-react"
 
-export function Settings() {
+export default function Settings() {
   const [notifications, setNotifications] = useState({
     email: true,
     push: false,

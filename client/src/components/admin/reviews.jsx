@@ -62,7 +62,7 @@ const reviews = [
   },
 ]
 
-export function Reviews() {
+export default function Reviews() {
   const [searchTerm, setSearchTerm] = useState("")
   const [ratingFilter, setRatingFilter] = useState("All")
 

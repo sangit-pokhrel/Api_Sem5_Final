@@ -6,8 +6,8 @@ import { toast, Toaster } from 'react-hot-toast'
 import axios from "axios"
 
 const API_URL = "http://localhost:3000/api/complaints"
-    
-export function Complaints() {
+
+export default function Complaints() {
   const [complaints, setComplaints] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("All")
@@ -55,7 +55,7 @@ export function Complaints() {
   const getComplaintData = (id) => {
     return complaints.find((complaint) => complaint._id === id) || {};
   };
-  
+
   const editingData = editComplaintId ? getComplaintData(editComplaintId) : {};
 
   const filtered = Array.isArray(complaints) ? complaints.filter(
@@ -146,7 +146,7 @@ export function Complaints() {
   };
 
   return (
-   <>
+    <>
       <Toaster position="top-right" />
       <div className="p-6 space-y-4">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">

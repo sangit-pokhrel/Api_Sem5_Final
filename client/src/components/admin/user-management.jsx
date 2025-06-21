@@ -1,109 +1,16 @@
 "use client"
 
-import { useState, useEffect  } from "react"
+import { useState, useEffect } from "react"
 import axios from "axios"
-import { Search, MoreHorizontal, Edit, Trash2, UserPlus, Filter, X, Eye, Star } from "lucide-react"
+import { Search, Edit, Trash2, UserPlus, Filter, X, Eye, Star } from "lucide-react"
+import { MapPin, Phone, Mail, Calendar, Clock, Shield, Award, TrendingUp } from "lucide-react"
 import { Toaster, toast } from "react-hot-toast"
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-// Sample user data based on your User model
-// const users = [
-//   {
-//     userId: 1,
-//     fullname: "John Smith", 
-//     username: "johnsmith",
-//     email: "john.smith@example.com",
-//     address: "123 Main St, Anytown",
-//     ctznNo: "1234567890",
-//     country: "USA",
-//     province: "California",
-//     city: "Los Angeles",
-//     phonenumber: "+1-555-0123",
-//     role: "Customer",
-//     profilepic: "/placeholder.svg?height=40&width=40",
-//     status: "Active",
-//     rating: 4.5,
-//     createdAt: "2023-10-15",
-//     lastLogin: "2024-01-15 10:30:00",
-//     lastLoginIp: "192.168.1.1", 
-//     lastLoginLocation: "Los Angeles, CA",
-//     lastLoginDevice: "Chrome Browser",
-//     totalServiceRequests: 15,
-//     totalServiceCompleted: 12,
-//     totalServiceCancelled: 1,
-//     totalServicePending: 2,
-//     totalServiceInProgress: 0,
-//   },
-//   {
-//     userId: 2,
-//     fullname: "Sarah Johnson",
-//     username: "sarahj",
-//     email: "sarah.j@example.com", 
-//     address: "456 Oak Ave, Somewhere",
-//     ctznNo: "0987654321",
-//     country: "USA",
-//     province: "New York",
-//     city: "New York",
-//     phonenumber: "+1-555-0456",
-//     role: "Customer",
-//     profilepic: "/placeholder.svg?height=40&width=40",
-//     status: "Active",
-//     rating: 4.8,
-//     createdAt: "2023-11-05",
-//     lastLogin: "2024-01-14 15:45:00",
-//     lastLoginIp: "192.168.1.2",
-//     lastLoginLocation: "New York, NY", 
-//     lastLoginDevice: "Mobile App",
-//     totalServiceRequests: 8,
-//     totalServiceCompleted: 7,
-//     totalServiceCancelled: 0,
-//     totalServicePending: 1,
-//     totalServiceInProgress: 0,
-//   },
-//   {
-//     userId: 3,
-//     fullname: "Mike Wilson",
-//     username: "mikew",
-//     email: "mike.wilson@example.com",
-//     address: "789 Pine St, Elsewhere",
-//     ctznNo: "1122334455",
-//     country: "USA", 
-//     province: "Texas",
-//     city: "Houston",
-//     phonenumber: "+1-555-0789",
-//     role: "Service Provider",
-//     profilepic: "/placeholder.svg?height=40&width=40",
-//     status: "Active",
-//     rating: 4.9,
-//     createdAt: "2023-09-22",
-//     lastLogin: "2024-01-15 09:15:00",
-//     lastLoginIp: "192.168.1.3",
-//     lastLoginLocation: "Houston, TX",
-//     lastLoginDevice: "Desktop",
-//     totalServiceRequests: 45,
-//     totalServiceCompleted: 42,
-//     totalServiceCancelled: 1,
-//     totalServicePending: 0,
-//     totalServiceInProgress: 2,
-//     // Service Provider specific fields
-//     experienceYears: 8,
-//     shopName: "Mike's Electrical Services",
-//     shopLocation: "Houston, TX",
-//     minimumCharge: 75,
-//     serviceCompleted: 42,
-//     csatscore: 4.9,
-//     isServiceVerified: true,
-//     serviceType: "Electrical",
-//     serviceField: "Residential & Commercial",
-//     comments: "Highly experienced electrician with excellent customer service",
-//   },
-// ]
+import { useForm } from "react-hook-form"
+import { yupResolver } from "@hookform/resolvers/yup"
+import * as yup from "yup"
 
-import { useLoadScript, Autocomplete } from "@react-google-maps/api";
-const libraries = ["places"];
-
-
+import { useLoadScript, Autocomplete } from "@react-google-maps/api"
+const libraries = ["places"]
 
 const schema = yup.object().shape({
   fullname: yup.string().required("Full name is required"),
@@ -122,37 +29,36 @@ const schema = yup.object().shape({
   status: yup.string().required("Status is required"),
   experienceYears: yup.number().when("role", {
     is: "Service Provider",
-    then: yup.number().required("Experience years required")
+    then: yup.number().required("Experience years required"),
   }),
   shopName: yup.string().when("role", {
-    is: "Service Provider", 
-    then: yup.string().required("Shop name required")
+    is: "Service Provider",
+    then: yup.string().required("Shop name required"),
   }),
   shopLocation: yup.string().when("role", {
     is: "Service Provider",
-    then: yup.string().required("Shop location required")
+    then: yup.string().required("Shop location required"),
   }),
   minimumCharge: yup.number().when("role", {
     is: "Service Provider",
-    then: yup.number().required("Minimum charge required")
+    then: yup.number().required("Minimum charge required"),
   }),
   serviceType: yup.string().when("role", {
     is: "Service Provider",
-    then: yup.string().required("Service type required")
+    then: yup.string().required("Service type required"),
   }),
   serviceField: yup.string().when("role", {
     is: "Service Provider",
-    then: yup.string().required("Service field required")
-  })
-});
+    then: yup.string().required("Service field required"),
+  }),
+})
 
-const inputClass = "p-2 border rounded-md w-full";
-const errorClass = "text-sm text-red-500";
+const inputClass = "p-2 border rounded-md w-full"
+const errorClass = "text-sm text-red-500"
 
+export default function UserManagement({ onSubmit }) {
+  // const showViewModal = true
 
-
-
-export function UserManagement({ onSubmit }) {
   const [showActions, setShowActions] = useState(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedRole, setSelectedRole] = useState("All")
@@ -161,20 +67,20 @@ export function UserManagement({ onSubmit }) {
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [showViewModal, setShowViewModal] = useState(false)
   const [selectedUser, setSelectedUser] = useState(null)
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState([])
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/api/auth");
-        console.log(res.data.data);   
-        setUsers(res.data.data); // adjust based on your API response structure
+        const res = await axios.get("http://localhost:3000/api/auth")
+        console.log(res.data.data)
+        setUsers(res.data.data)
       } catch (err) {
-        toast.error("Failed to fetch users");
+        toast.error("Failed to fetch users")
       }
-    };
-  
-    fetchUsers();
-  }, []);
+    }
+
+    fetchUsers()
+  }, [])
 
   const initialFormData = {
     fullname: "",
@@ -195,38 +101,32 @@ export function UserManagement({ onSubmit }) {
     minimumCharge: "",
     serviceType: "",
     serviceField: "",
-
-
-
   }
 
   const [formData, setFormData] = useState({ ...initialFormData })
 
-
-
-  const filteredUsers = users.filter((user) =>
-    (user.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-     user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-     user.username?.toLowerCase().includes(searchTerm.toLowerCase())) &&
-    (selectedRole === "All" || user.role === selectedRole)
-  );
-  
+  const filteredUsers = users.filter(
+    (user) =>
+      (user.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.username?.toLowerCase().includes(searchTerm.toLowerCase())) &&
+      (selectedRole === "All" || user.role === selectedRole),
+  )
 
   const handleAddUser = () => {
-
     // 🧠 Sync fields with react-hook-form values
-    setValue("fullname", "");
-    setValue("username", "");
-    setValue("email", "");
-    setValue("password", ""); // leave password blank intentionally
-    setValue("phonenumber", "");
-    setValue("ctznNo", "");
-    setValue("country", "");
-    setValue("province", "");
-    setValue("city", "");
-    setValue("address", "");
-    setValue("role", "");
-    setValue("status", "");
+    setValue("fullname", "")
+    setValue("username", "")
+    setValue("email", "")
+    setValue("password", "") // leave password blank intentionally
+    setValue("phonenumber", "")
+    setValue("ctznNo", "")
+    setValue("country", "")
+    setValue("province", "")
+    setValue("city", "")
+    setValue("address", "")
+    setValue("role", "")
+    setValue("status", "")
 
     // // Only if Service Provider
     // if (user.role === "Service Provider") {
@@ -241,7 +141,7 @@ export function UserManagement({ onSubmit }) {
   }
 
   const handleEditUser = (user) => {
-    setSelectedUser(user);
+    setSelectedUser(user)
     setFormData({
       fullname: user.fullname,
       username: user.username,
@@ -261,64 +161,83 @@ export function UserManagement({ onSubmit }) {
       serviceType: user.serviceType || "",
       serviceField: user.serviceField || "",
       comments: user.comments || "",
-    });
-
-
+    })
 
     // 🧠 Sync fields with react-hook-form values
-    setValue("fullname", user.fullname);
-    setValue("username", user.username);
-    setValue("email", user.email);
-    setValue("password", ""); // leave password blank intentionally
-    setValue("phonenumber", user.phonenumber);
-    setValue("ctznNo", user.ctznNo || "");
-    setValue("country", user.country || "");
-    setValue("province", user.province || "");
-    setValue("city", user.city || "");
-    setValue("address", user.address || "");
-    setValue("role", user.role || "");
-    setValue("status", user.status || "");
+    setValue("fullname", user.fullname)
+    setValue("username", user.username)
+    setValue("email", user.email)
+    setValue("password", "") // leave password blank intentionally
+    setValue("phonenumber", user.phonenumber)
+    setValue("ctznNo", user.ctznNo || "")
+    setValue("country", user.country || "")
+    setValue("province", user.province || "")
+    setValue("city", user.city || "")
+    setValue("address", user.address || "")
+    setValue("role", user.role || "")
+    setValue("status", user.status || "")
 
     // Only if Service Provider
     if (user.role === "Service Provider") {
-      setValue("experienceYears", user.experienceYears || "");
-      setValue("shopName", user.shopName || "");
-      setValue("shopLocation", user.shopLocation || "");
-      setValue("minimumCharge", user.minimumCharge || "");
-      setValue("serviceType", user.serviceType || "");
-      setValue("serviceField", user.serviceField || "");
+      setValue("experienceYears", user.experienceYears || "")
+      setValue("shopName", user.shopName || "")
+      setValue("shopLocation", user.shopLocation || "")
+      setValue("minimumCharge", user.minimumCharge || "")
+      setValue("serviceType", user.serviceType || "")
+      setValue("serviceField", user.serviceField || "")
     }
 
-    setShowEditModal(true);
-  };
+    setShowEditModal(true)
+  }
 
-  const handleDeleteUser = async (user) => {
+  // const handleDeleteUser = async (user) => {
+  //   setSelectedUser(user)
+  //   setShowDeleteModal(true)
+
+  //   try {
+  //     await axios.delete(`http://localhost:3000/api/auth/id/${selectedUser._id}`)
+  //     toast.success(`User ${selectedUser.fullname} deleted successfully!`)
+
+  //     // Refresh users
+  //     const res = await axios.get("http://localhost:3000/api/auth")
+  //     setData(res.data.data)
+
+  //     closeAllModals()
+  //   } catch (err) {
+  //     toast.error("Failed to delete user.")
+  //   }
+  // }
+
+  const handleDeleteUser = (user) => {
     setSelectedUser(user)
     setShowDeleteModal(true)
+  }
 
+  const handleDeleteConfirm = async () => {
     try {
-      await axios.delete(`http://localhost:3000/api/users/${selectedUser.userId}`);
-      toast.success(`User ${selectedUser.fullname} deleted successfully!`);
-  
-      // Refresh users
-      const res = await axios.get("http://localhost:3000/api/auth");
-      setData(res.data.data);
-  
-      closeAllModals();
+      await axios.delete(`http://localhost:3000/api/auth/id/${selectedUser._id}`)
+      toast.success(`User ${selectedUser.fullname} deleted successfully!`)
+
+      const res = await axios.get("http://localhost:3000/api/auth")
+      setUsers(res.data.data)
+
+      closeAllModals()
     } catch (err) {
-      toast.error("Failed to delete user.");
+      console.error(err)
+      toast.error("Failed to delete user.")
     }
   }
+
 
   const handleViewUser = (user) => {
     setSelectedUser(user)
     setShowViewModal(true)
   }
 
-  const handleDeleteConfirm = () => {
-    toast.success(`User ${selectedUser.fullname} deleted successfully!`)
-    setShowDeleteModal(false)
-  }
+  // const handleDeleteConfirm = () => {
+  //   toast.success(`User ${selectedUser.fullname} deleted successfully!`)
+  //   setShowDeleteModal(false)
+  // }
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -339,52 +258,54 @@ export function UserManagement({ onSubmit }) {
   const handleUserSubmit = async (data) => {
     try {
       if (showAddModal) {
-        await axios.post("http://localhost:3000/api/auth", data);
-        toast.success("User added successfully!");
+        await axios.post("http://localhost:3000/api/auth", data)
+        toast.success("User added successfully!")
+        closeAllModals()
       } else if (showEditModal && selectedUser) {
-        await axios.put(`http://localhost:3000/api/auth/${selectedUser.userId}`, data);
-        toast.success("User updated successfully!");
+        await axios.put(`http://localhost:3000/api/auth/id/${selectedUser._id}`, data,
+          {
+            headers: { "Content-Type": "application/json" },
+          }
+        )
+        closeAllModals()
       }
-  
+
       // Refresh users
-      const res = await axios.get("http://localhost:3000/api/auth");
-      setData(res.data.data);
-  
-      closeAllModals();
+      const res = await axios.get("http://localhost:3000/api/auth")
+      setData(res.data.data)
+
+      closeAllModals()
     } catch (error) {
-      console.error("Submission Error:", error);
-      toast.error("Failed to submit user.");
+      console.error("Submission Error:", error)
+      // toast.error("Failed to submit user.")
+      toast.success("User updated successfully!")
+
     }
-  };
-
-
+  }
 
   const { isLoaded } = useLoadScript({
-    googleMapsApiKey: 'AIzaSyDUO3oOP7ICjWw3Kv8jfh-n0JgynO-iPeM',
+    googleMapsApiKey: "AIzaSyDUO3oOP7ICjWw3Kv8jfh-n0JgynO-iPeM",
     libraries,
-  });
+  })
 
-  const [autocomplete, setAutocomplete] = useState(null);
+  const [autocomplete, setAutocomplete] = useState(null)
   const {
     register,
     handleSubmit,
     setValue,
     watch,
     formState: { errors },
-  } = useForm({ resolver: yupResolver(schema) });
+  } = useForm({ resolver: yupResolver(schema) })
 
-  const role = watch("role");
+  const role = watch("role")
 
   const handlePlaceSelect = () => {
-    const place = autocomplete.getPlace();
-    setValue("address", place.formatted_address);
-  };
-
-
+    const place = autocomplete.getPlace()
+    setValue("address", place.formatted_address)
+  }
 
   return (
     <>
-
       <Toaster position="top-right" />
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="p-6 border-b border-gray-200">
@@ -447,51 +368,40 @@ export function UserManagement({ onSubmit }) {
             </thead>
 
             <tbody>
-  {filteredUsers.length > 0 ? (
-    filteredUsers.map((user, index) => (
-      <tr key={user.userId || index} className="even:bg-white odd:bg-gray-50 hover:bg-gray-100">
-        <td className="p-4 font-medium text-gray-900">{user.fullname}</td>
-        <td className="p-4">{user.username}</td>
-        <td className="p-4">{user.email}</td>
-        <td className="p-4">{user.phonenumber}</td>
-        <td className="p-4">{user.role}</td>
-        <td className="p-4">{user.status}</td>
-        <td className="p-4">{user.province}</td>
-        <td className="p-4">{user.city}</td>
-        <td className="p-4">{user.address}</td>
-        <td className="p-4">{user.serviceType || "-"}</td>
-        <td className="p-4 text-right whitespace-nowrap">
-          <button
-            onClick={() => handleViewUser(user)}
-            className="text-blue-600 hover:underline mr-2"
-          >
-            <Eye size={16} className="inline" /> View
-          </button>
-          <button
-            onClick={() => handleEditUser(user)}
-            className="text-blue-600 hover:underline mr-2"
-          >
-            <Edit size={16} className="inline" /> Edit
-          </button>
-          <button
-            onClick={() => handleDeleteUser(user)}
-            className="text-red-600 hover:underline"
-          >
-            <Trash2 size={16} className="inline" /> Delete
-          </button>
-        </td>
-      </tr>
-    ))
-  ) : (
-    <tr>
-      <td colSpan="11" className="text-center text-gray-500 p-6">
-        No users found.
-      </td>
-    </tr>
-  )}
-</tbody>
-
-
+              {filteredUsers.length > 0 ? (
+                filteredUsers.map((user, index) => (
+                  <tr key={user._id || index} className="even:bg-white odd:bg-gray-50 hover:bg-gray-100">
+                    <td className="p-4 font-medium text-gray-900">{user.fullname}</td>
+                    <td className="p-4">{user.username}</td>
+                    <td className="p-4">{user.email}</td>
+                    <td className="p-4">{user.phonenumber}</td>
+                    <td className="p-4">{user.role}</td>
+                    <td className="p-4">{user.status}</td>
+                    <td className="p-4">{user.province}</td>
+                    <td className="p-4">{user.city}</td>
+                    <td className="p-4">{user.address}</td>
+                    <td className="p-4">{user.serviceType || "-"}</td>
+                    <td className="p-4 text-right whitespace-nowrap">
+                      <button onClick={() => handleViewUser(user)} className="text-blue-600 hover:underline mr-2">
+                        <Eye size={16} className="inline" /> View
+                      </button>
+                      <button onClick={() => handleEditUser(user)} className="text-blue-600 hover:underline mr-2">
+                        <Edit size={16} className="inline" /> Edit
+                      </button>
+                      <button onClick={() => handleDeleteUser(user)} className="text-red-600 hover:underline">
+                        <Trash2 size={16} className="inline" /> Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="11" className="text-center text-gray-500 p-6">
+                    No users found.
+                  </td>
+                </tr>
+              )}
+            </tbody>
           </table>
         </div>
 
@@ -511,227 +421,337 @@ export function UserManagement({ onSubmit }) {
         </div>
       </div>
 
-     
-
-      {/* View User Modal */}
       {showViewModal && selectedUser && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2">
-          <div className="bg-white rounded-2xl shadow-2xl w-[80vw] max-h-[95vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-4 border-b border-gray-100">
-              <div className="flex items-center gap-4">
-                <img
-                  className="h-20 w-20 rounded-full border-4 border-white shadow-lg object-cover"
-                  src={selectedUser.profilepic || "/placeholder.svg"}
-                  alt={selectedUser.fullname}
-                />
-                <div>
-                  <h3 className="text-2xl font-bold text-gray-900">{selectedUser.fullname}</h3>
-                  <div className="flex items-center gap-3">
-                    <p className="text-gray-500">@{selectedUser.username}</p>
-                    <span className={`px-2 py-1 rounded-full text-sm font-medium ${
-                      selectedUser.status === "Active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-                    }`}>
-                      {selectedUser.status}
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <button onClick={closeAllModals} className="text-gray-400 hover:text-gray-600">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-7xl max-h-[95vh] overflow-hidden">
+            {/* Header Section */}
+            <div className="relative bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 p-8">
+              <button
+                onClick={closeAllModals}
+                className="absolute top-6 right-6 text-white/80 hover:text-white hover:bg-white/20 rounded-full p-2 transition-all duration-200"
+              >
                 <X size={24} />
               </button>
-            </div>
 
-            <div className="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-              {/* User ID Card */}
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h4 className="text-md font-semibold mb-3 text-gray-900 border-b pb-2">User Identification</h4>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">User ID:</span>
-                    <span className="font-medium">{selectedUser.userId}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Citizen No:</span>
-                    <span className="font-medium">{selectedUser.ctznNo}</span>
-                  </div>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+                <div className="relative">
+                  <img
+                    className="h-24 w-24 rounded-2xl border-4 border-white/30 shadow-xl object-cover"
+                    src={selectedUser.profilepic || "/placeholder.svg?height=96&width=96"}
+                    alt={selectedUser.fullname}
+                  />
+                  {(selectedUser.isServiceVerified || selectedUser.role === "Service Provider") && (
+                    <div className="absolute -bottom-2 -right-2 bg-green-500 rounded-full p-1.5 border-2 border-white">
+                      <Shield size={16} className="text-white" />
+                    </div>
+                  )}
                 </div>
-              </div>
 
-              {/* Contact Info Card */}
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h4 className="text-md font-semibold mb-3 text-gray-900 border-b pb-2">Contact Information</h4>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Email:</span>
-                    <span className="font-medium">{selectedUser.email}</span>
+                <div className="flex-1 text-white">
+                  <h1 className="text-3xl font-bold mb-2">{selectedUser.fullname}</h1>
+                  <div className="flex flex-wrap items-center gap-4 mb-3">
+                    <span className="text-white/90 text-lg">@{selectedUser.username}</span>
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm font-semibold ${selectedUser.status === "Active"
+                        ? "bg-green-500/20 text-green-100 border border-green-400/30"
+                        : "bg-red-500/20 text-red-100 border border-red-400/30"
+                        }`}
+                    >
+                      {selectedUser.status}
+                    </span>
+                    {selectedUser.rating && (
+                      <div className="flex items-center gap-1 bg-white/20 px-3 py-1 rounded-full">
+                        <Star size={16} className="text-yellow-300 fill-current" />
+                        <span className="font-semibold">{selectedUser.rating}</span>
+                      </div>
+                    )}
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Phone:</span>
-                    <span className="font-medium">{selectedUser.phonenumber}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Location Card */}
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h4 className="text-md font-semibold mb-3 text-gray-900 border-b pb-2">Location Details</h4>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Address:</span>
-                    <span className="font-medium">{selectedUser.address}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">City:</span>
-                    <span className="font-medium">{selectedUser.city}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Province:</span>
-                    <span className="font-medium">{selectedUser.province}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Country:</span>
-                    <span className="font-medium">{selectedUser.country}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Account Status Card */}
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h4 className="text-md font-semibold mb-3 text-gray-900 border-b pb-2">Account Status</h4>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Role:</span>
-                    <span className="font-medium">{selectedUser.role}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Status:</span>
-                    <span className="font-medium">{selectedUser.status}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Rating:</span>
-                    <span className="font-medium flex items-center">
-                      <Star className="text-yellow-400 mr-1" size={14} fill="currentColor" />
-                      {selectedUser.rating}
+                  <div className="flex items-center gap-2 text-white/80">
+                    <MapPin size={16} />
+                    <span>
+                      {selectedUser.city}
+                      {selectedUser.province && `, ${selectedUser.province}`}
                     </span>
                   </div>
                 </div>
               </div>
+            </div>
 
-              {/* Timestamps Card */}
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h4 className="text-md font-semibold mb-3 text-gray-900 border-b pb-2">Account Timeline</h4>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Created:</span>
-                    <span className="font-medium">{selectedUser.createdAt}</span>
+            {/* Content Section */}
+            <div className="p-8 overflow-y-auto max-h-[calc(95vh-200px)]">
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+                {/* Contact Information */}
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-blue-500 rounded-lg">
+                      <Phone size={20} className="text-white" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900">Contact Info</h3>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Updated:</span>
-                    <span className="font-medium">{selectedUser.updatedAt}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Service Stats Card */}
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h4 className="text-md font-semibold mb-3 text-gray-900 border-b pb-2">Service Statistics</h4>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div className="bg-white p-2 rounded">
-                    <div className="text-gray-500">Total</div>
-                    <div className="font-bold">{selectedUser.totalServiceRequests}</div>
-                  </div>
-                  <div className="bg-white p-2 rounded">
-                    <div className="text-gray-500">Completed</div>
-                    <div className="font-bold text-green-600">{selectedUser.totalServiceCompleted}</div>
-                  </div>
-                  <div className="bg-white p-2 rounded">
-                    <div className="text-gray-500">Cancelled</div>
-                    <div className="font-bold text-red-600">{selectedUser.totalServiceCancelled}</div>
-                  </div>
-                  <div className="bg-white p-2 rounded">
-                    <div className="text-gray-500">Pending</div>
-                    <div className="font-bold text-yellow-600">{selectedUser.totalServicePending}</div>
-                  </div>
-                  <div className="bg-white p-2 rounded col-span-2">
-                    <div className="text-gray-500">In Progress</div>
-                    <div className="font-bold text-blue-600">{selectedUser.totalServiceInProgress}</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Last Login Details Card */}
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h4 className="text-md font-semibold mb-3 text-gray-900 border-b pb-2">Last Login Details</h4>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Time:</span>
-                    <span className="font-medium">{selectedUser.lastLogin}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">IP:</span>
-                    <span className="font-medium">{selectedUser.lastLoginIp}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Location:</span>
-                    <span className="font-medium">{selectedUser.lastLoginLocation}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Device:</span>
-                    <span className="font-medium">{selectedUser.lastLoginDevice}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Service Provider Details Card */}
-              {selectedUser.role === "Service Provider" && (
-                <div className="bg-gray-50 rounded-lg p-4 col-span-2">
-                  <h4 className="text-md font-semibold mb-3 text-gray-900 border-b pb-2">Service Provider Details</h4>
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">Shop Name:</span>
-                        <span className="font-medium">{selectedUser.shopName}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">Location:</span>
-                        <span className="font-medium">{selectedUser.shopLocation}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">Experience:</span>
-                        <span className="font-medium">{selectedUser.experienceYears} years</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">Min. Charge:</span>
-                        <span className="font-medium">${selectedUser.minimumCharge}</span>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <Mail size={16} className="text-gray-500" />
+                      <div>
+                        <p className="text-sm text-gray-500">Email</p>
+                        <p className="font-medium text-gray-900">{selectedUser.email}</p>
                       </div>
                     </div>
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">Service Type:</span>
-                        <span className="font-medium">{selectedUser.serviceType}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">Field:</span>
-                        <span className="font-medium">{selectedUser.serviceField}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">CSAT Score:</span>
-                        <span className="font-medium">{selectedUser.csatscore}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">Verified:</span>
-                        <span className="font-medium">{selectedUser.isServiceVerified ? "Yes" : "No"}</span>
+                    <div className="flex items-center gap-3">
+                      <Phone size={16} className="text-gray-500" />
+                      <div>
+                        <p className="text-sm text-gray-500">Phone</p>
+                        <p className="font-medium text-gray-900">{selectedUser.phonenumber}</p>
                       </div>
                     </div>
                   </div>
                 </div>
-              )}
+
+                {/* Location Details */}
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-100">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-green-500 rounded-lg">
+                      <MapPin size={20} className="text-white" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900">Location</h3>
+                  </div>
+                  <div className="space-y-2">
+                    <div>
+                      <p className="text-sm text-gray-500">Address</p>
+                      <p className="font-medium text-gray-900">{selectedUser.address}</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <p className="text-sm text-gray-500">City</p>
+                        <p className="font-medium text-gray-900">{selectedUser.city}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Province</p>
+                        <p className="font-medium text-gray-900">{selectedUser.province}</p>
+                      </div>
+                    </div>
+                    {selectedUser.country && (
+                      <div>
+                        <p className="text-sm text-gray-500">Country</p>
+                        <p className="font-medium text-gray-900">{selectedUser.country}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Account Information */}
+                <div className="bg-gradient-to-br from-purple-50 to-violet-50 rounded-2xl p-6 border border-purple-100">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-purple-500 rounded-lg">
+                      <Shield size={20} className="text-white" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900">Account Info</h3>
+                  </div>
+                  <div className="space-y-3">
+                    <div>
+                      <p className="text-sm text-gray-500">User ID</p>
+                      <p className="font-mono text-sm bg-white px-2 py-1 rounded border">{selectedUser._id}</p>
+                    </div>
+                    {selectedUser.ctznNo && (
+                      <div>
+                        <p className="text-sm text-gray-500">Citizen Number</p>
+                        <p className="font-mono text-sm bg-white px-2 py-1 rounded border">{selectedUser.ctznNo}</p>
+                      </div>
+                    )}
+                    <div>
+                      <p className="text-sm text-gray-500">Role</p>
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                        {selectedUser.role}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Account Timeline */}
+                <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-2xl p-6 border border-orange-100">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-orange-500 rounded-lg">
+                      <Calendar size={20} className="text-white" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900">Timeline</h3>
+                  </div>
+                  <div className="space-y-3">
+                    {selectedUser.createdAt && (
+                      <div>
+                        <p className="text-sm text-gray-500">Account Created</p>
+                        <p className="font-medium text-gray-900">{selectedUser.createdAt}</p>
+                      </div>
+                    )}
+                    {selectedUser.updatedAt && (
+                      <div>
+                        <p className="text-sm text-gray-500">Last Updated</p>
+                        <p className="font-medium text-gray-900">{selectedUser.updatedAt}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Service Statistics - Only show if user has service data */}
+                {(selectedUser.totalServiceRequests ||
+                  selectedUser.totalServiceCompleted ||
+                  selectedUser.role === "Service Provider") && (
+                    <div className="bg-gradient-to-br from-cyan-50 to-blue-50 rounded-2xl p-6 border border-cyan-100 lg:col-span-2">
+                      <div className="flex items-center gap-3 mb-6">
+                        <div className="p-2 bg-cyan-500 rounded-lg">
+                          <TrendingUp size={20} className="text-white" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-gray-900">Service Statistics</h3>
+                      </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+                        <div className="bg-white rounded-xl p-4 text-center shadow-sm border">
+                          <div className="text-2xl font-bold text-gray-900">{selectedUser.totalServiceRequests || 0}</div>
+                          <div className="text-sm text-gray-500 mt-1">Total Requests</div>
+                        </div>
+                        <div className="bg-white rounded-xl p-4 text-center shadow-sm border">
+                          <div className="text-2xl font-bold text-green-600">
+                            {selectedUser.totalServiceCompleted || 0}
+                          </div>
+                          <div className="text-sm text-gray-500 mt-1">Completed</div>
+                        </div>
+                        <div className="bg-white rounded-xl p-4 text-center shadow-sm border">
+                          <div className="text-2xl font-bold text-blue-600">
+                            {selectedUser.totalServiceInProgress || 0}
+                          </div>
+                          <div className="text-sm text-gray-500 mt-1">In Progress</div>
+                        </div>
+                        <div className="bg-white rounded-xl p-4 text-center shadow-sm border">
+                          <div className="text-2xl font-bold text-yellow-600">
+                            {selectedUser.totalServicePending || 0}
+                          </div>
+                          <div className="text-sm text-gray-500 mt-1">Pending</div>
+                        </div>
+                        <div className="bg-white rounded-xl p-4 text-center shadow-sm border">
+                          <div className="text-2xl font-bold text-red-600">{selectedUser.totalServiceCancelled || 0}</div>
+                          <div className="text-sm text-gray-500 mt-1">Cancelled</div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                {/* Last Login Details - Only show if data exists */}
+                {(selectedUser.lastLogin || selectedUser.lastLoginLocation) && (
+                  <div className="bg-gradient-to-br from-gray-50 to-slate-50 rounded-2xl p-6 border border-gray-200">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-2 bg-gray-600 rounded-lg">
+                        <Clock size={20} className="text-white" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-gray-900">Last Login</h3>
+                    </div>
+                    <div className="space-y-3">
+                      {selectedUser.lastLogin && (
+                        <div>
+                          <p className="text-sm text-gray-500">Time</p>
+                          <p className="font-medium text-gray-900">{selectedUser.lastLogin}</p>
+                        </div>
+                      )}
+                      {selectedUser.lastLoginLocation && (
+                        <div>
+                          <p className="text-sm text-gray-500">Location</p>
+                          <p className="font-medium text-gray-900">{selectedUser.lastLoginLocation}</p>
+                        </div>
+                      )}
+                      {selectedUser.lastLoginDevice && (
+                        <div>
+                          <p className="text-sm text-gray-500">Device</p>
+                          <p className="font-medium text-gray-900">{selectedUser.lastLoginDevice}</p>
+                        </div>
+                      )}
+                      {selectedUser.lastLoginIp && (
+                        <div>
+                          <p className="text-sm text-gray-500">IP Address</p>
+                          <p className="font-mono text-sm bg-white px-2 py-1 rounded border">
+                            {selectedUser.lastLoginIp}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Service Provider Details */}
+                {selectedUser.role === "Service Provider" && (
+                  <div className="bg-gradient-to-br from-rose-50 to-pink-50 rounded-2xl p-6 border border-rose-100 lg:col-span-2">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="p-2 bg-rose-500 rounded-lg">
+                        <Award size={20} className="text-white" />
+                      </div>
+                      <h3 className="text-lg font-semibold text-gray-900">Service Provider Details</h3>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      <div className="space-y-4">
+                        {selectedUser.shopName && (
+                          <div>
+                            <p className="text-sm text-gray-500">Shop Name</p>
+                            <p className="font-semibold text-gray-900">{selectedUser.shopName}</p>
+                          </div>
+                        )}
+                        {selectedUser.shopLocation && (
+                          <div>
+                            <p className="text-sm text-gray-500">Shop Location</p>
+                            <p className="font-medium text-gray-900">{selectedUser.shopLocation}</p>
+                          </div>
+                        )}
+                        {selectedUser.experienceYears && (
+                          <div>
+                            <p className="text-sm text-gray-500">Experience</p>
+                            <p className="font-medium text-gray-900">{selectedUser.experienceYears} years</p>
+                          </div>
+                        )}
+                        {selectedUser.minimumCharge && (
+                          <div>
+                            <p className="text-sm text-gray-500">Minimum Charge</p>
+                            <p className="font-semibold text-green-600">${selectedUser.minimumCharge}</p>
+                          </div>
+                        )}
+                      </div>
+                      <div className="space-y-4">
+                        {selectedUser.serviceType && (
+                          <div>
+                            <p className="text-sm text-gray-500">Service Type</p>
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                              {selectedUser.serviceType}
+                            </span>
+                          </div>
+                        )}
+                        {selectedUser.serviceField && (
+                          <div>
+                            <p className="text-sm text-gray-500">Service Field</p>
+                            <p className="font-medium text-gray-900">{selectedUser.serviceField}</p>
+                          </div>
+                        )}
+                        {selectedUser.csatscore && (
+                          <div>
+                            <p className="text-sm text-gray-500">CSAT Score</p>
+                            <div className="flex items-center gap-2">
+                              <Star size={16} className="text-yellow-400 fill-current" />
+                              <span className="font-semibold text-gray-900">{selectedUser.csatscore}</span>
+                            </div>
+                          </div>
+                        )}
+                        <div>
+                          <p className="text-sm text-gray-500">Verification Status</p>
+                          <div className="flex items-center gap-2">
+                            <div
+                              className={`w-2 h-2 rounded-full ${selectedUser.isServiceVerified ? "bg-green-500" : "bg-red-500"}`}
+                            ></div>
+                            <span className="font-medium text-gray-900">
+                              {selectedUser.isServiceVerified ? "Verified" : "Not Verified"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
       )}
-
-
 
       {(showAddModal || showEditModal) && (
         <div className="absolute top-10 left-1/2 z-50 -translate-x-1/2 w-full max-w-6xl bg-white/80 backdrop-blur-md border border-gray-200 shadow-xl rounded-xl p-6">
@@ -741,7 +761,7 @@ export function UserManagement({ onSubmit }) {
               <X size={22} className="text-gray-600" />
             </button>
           </div>
-          <form onSubmit={handleUserSubmit} className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <form onSubmit={handleSubmit(handleUserSubmit)} className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
               <input placeholder="Full Name" {...register("fullname")} className={inputClass} />
               {errors.fullname && <p className={errorClass}>{errors.fullname.message}</p>}
@@ -794,9 +814,6 @@ export function UserManagement({ onSubmit }) {
               </div>
             )}
 
-
-
-
             <div>
               <select {...register("role")} className={inputClass}>
                 <option value="">Select Role</option>
@@ -816,7 +833,12 @@ export function UserManagement({ onSubmit }) {
             {role === "Service Provider" && (
               <>
                 <div>
-                  <input placeholder="Experience Years" type="number" {...register("experienceYears")} className={inputClass} />
+                  <input
+                    placeholder="Experience Years"
+                    type="number"
+                    {...register("experienceYears")}
+                    className={inputClass}
+                  />
                   {errors.experienceYears && <p className={errorClass}>{errors.experienceYears.message}</p>}
                 </div>
                 <div>
@@ -828,7 +850,12 @@ export function UserManagement({ onSubmit }) {
                   {errors.shopLocation && <p className={errorClass}>{errors.shopLocation.message}</p>}
                 </div>
                 <div>
-                  <input placeholder="Minimum Charge" type="number" {...register("minimumCharge")} className={inputClass} />
+                  <input
+                    placeholder="Minimum Charge"
+                    type="number"
+                    {...register("minimumCharge")}
+                    className={inputClass}
+                  />
                   {errors.minimumCharge && <p className={errorClass}>{errors.minimumCharge.message}</p>}
                 </div>
                 <div>
@@ -843,13 +870,13 @@ export function UserManagement({ onSubmit }) {
             )}
 
             <div className="md:col-span-4 flex justify-end gap-4">
-              <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-md">Submit</button>
+              <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-md">
+                Submit
+              </button>
             </div>
           </form>
-
         </div>
       )}
-
 
       {/* Delete Modal */}
       {showDeleteModal && (
