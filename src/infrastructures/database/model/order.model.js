@@ -1,22 +1,19 @@
+// 📁 src/infrastructures/database/model/order_history.model.js
 const mongoose = require("mongoose")
 
-const OrderSchema = new mongoose.Schema({
-    customer: { type: String, required: true },
-    product: { type: String, required: true },
-    amount: { type: Number, required: true },
-    status: {
-        type: String,
-        enum: ["Pending", "Processing", "Shipped", "Completed", "Cancelled"],
-        default: "Pending",
-    },
-    date: { type: Date, default: Date.now },
+const OrderHistorySchema = new mongoose.Schema({
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    orderId: { type: mongoose.Schema.Types.ObjectId, ref: "Order" },
+    customer: String,
+    product: String,
+    amount: Number,
+    status: String,
     tracking: {
-        steps: {
-            type: [String],
-            default: ["Order Placed", "Processing", "Shipped", "Delivered"],
-        },
-        currentStep: { type: Number, default: 0 },
+        steps: [String],
+        currentStep: Number,
     },
+    completedAt: { type: Date, default: Date.now },
 })
 
-module.exports = mongoose.model("Order", OrderSchema)
+OrderHistorySchema.index({ userId: 1, completedAt: -1 })
+module.exports = mongoose.model("OrderHistory", OrderHistorySchema)

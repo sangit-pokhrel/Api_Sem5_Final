@@ -13,5 +13,7 @@ router.put("/:id", OrderController.updateOrder)
 router.patch("/:id/status", OrderController.updateStatus)
 router.patch("/:id/track", OrderController.advanceTracking)
 router.delete("/:id", OrderController.deleteOrder)
+router.get("/history/user/:userId", OrderController.getUserOrderHistory)
+
 
 module.exports = router
