@@ -68,6 +68,8 @@ const complaintController =
   require("./interfaces/controller/complaint.controller")(complaintUseCases);
 const complaintRoutes =
   require("./interfaces/routes/complaint.routes")(complaintController);
+const orderRoutes = require("./interfaces/routes/order.routes")
+
 
 // Routes
 app.use("/api/reviews", reviewRoutes);
@@ -75,5 +77,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/complaints", complaintRoutes);
 app.use("/api", forgotRoutes);
+app.use("/api/orders", orderRoutes)
 
 module.exports = app;

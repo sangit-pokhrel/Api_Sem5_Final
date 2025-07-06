@@ -2,20 +2,24 @@
 
 const AuthController = (authUseCases, userRepo) => ({
   // ========== AUTH METHODS ==========
-
   register: async (req, res) => {
     try {
       const result = await authUseCases.register(req.body);
-      res.status(201).json({
+
+      return res.status(201).json({
         success: true,
         message: "User registered successfully",
-        token: result.token,
         user: result.user,
       });
     } catch (error) {
-      res.status(400).json({ success: false, message: error.message });
+      console.error("Register error:", error);
+      return res.status(400).json({
+        success: false,
+        message: error.message || "Registration failed",
+      });
     }
   },
+
 
   login: async (req, res) => {
     try {
