@@ -1,10 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { Search, Star, Filter, ThumbsUp, ThumbsDown, Flag } from "lucide-react"
+import { Search, Star, Filter, ThumbsUp, ThumbsDown, Flag, Plus, Pencil, Trash2 } from "lucide-react"
 
-// Sample review data
-const reviews = [
+const initialReviews = [
   {
     id: 1,
     user: "John Smith",
@@ -38,33 +37,12 @@ const reviews = [
     helpful: 15,
     unhelpful: 0,
   },
-  {
-    id: 4,
-    user: "Emily Davis",
-    service: "Lawn Mowing",
-    provider: "Green Thumb Landscaping",
-    rating: 2,
-    comment: "Showed up late and did a rushed job. Not satisfied with the service.",
-    date: "2024-01-08",
-    helpful: 3,
-    unhelpful: 7,
-  },
-  {
-    id: 5,
-    user: "Michael Wilson",
-    service: "Carpet Cleaning",
-    provider: "Fresh Carpets Inc",
-    rating: 4,
-    comment: "Good job overall. Carpets look much better now. Would use again.",
-    date: "2024-01-05",
-    helpful: 9,
-    unhelpful: 1,
-  },
 ]
 
 export default function Reviews() {
   const [searchTerm, setSearchTerm] = useState("")
   const [ratingFilter, setRatingFilter] = useState("All")
+  const [reviews, setReviews] = useState(initialReviews)
 
   const filteredReviews = reviews.filter(
     (review) =>
@@ -72,7 +50,7 @@ export default function Reviews() {
         review.service.toLowerCase().includes(searchTerm.toLowerCase()) ||
         review.provider.toLowerCase().includes(searchTerm.toLowerCase()) ||
         review.comment.toLowerCase().includes(searchTerm.toLowerCase())) &&
-      (ratingFilter === "All" || review.rating === Number.parseInt(ratingFilter)),
+      (ratingFilter === "All" || review.rating === parseInt(ratingFilter)),
   )
 
   const renderStars = (rating) => {
@@ -83,12 +61,47 @@ export default function Reviews() {
       ))
   }
 
+  const handleAdd = () => {
+    const newReview = {
+      id: reviews.length + 1,
+      user: "New User",
+      service: "New Service",
+      provider: "New Provider",
+      rating: 3,
+      comment: "This is a newly added review.",
+      date: new Date().toISOString().split("T")[0],
+      helpful: 0,
+      unhelpful: 0,
+    }
+    setReviews([newReview, ...reviews])
+  }
+
+  const handleEdit = (id) => {
+    const updated = reviews.map((r) =>
+      r.id === id ? { ...r, comment: r.comment + " (edited)" } : r,
+    )
+    setReviews(updated)
+  }
+
+  const handleDelete = (id) => {
+    const confirmed = window.confirm("Are you sure you want to delete this review?")
+    if (confirmed) {
+      setReviews(reviews.filter((r) => r.id !== id))
+    }
+  }
+
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200">
       <div className="p-6 border-b border-gray-200">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <h2 className="text-xl font-semibold text-gray-900">Customer Reviews</h2>
-          <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              onClick={handleAdd}
+              className="flex items-center px-3 py-2 bg-blue-500 text-white text-sm rounded hover:bg-blue-600"
+            >
+              <Plus size={16} className="mr-1" /> Add Review
+            </button>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
               <input
@@ -136,9 +149,23 @@ export default function Reviews() {
                   </p>
                   <p className="text-gray-700">{review.comment}</p>
                 </div>
-                <div>
-                  <button className="p-1 text-gray-400 hover:text-red-500">
+                <div className="flex flex-col space-y-1 items-end">
+                  <button className="p-1 text-gray-400 hover:text-red-500" title="Report">
                     <Flag size={16} />
+                  </button>
+                  <button
+                    onClick={() => handleEdit(review.id)}
+                    className="p-1 text-gray-400 hover:text-blue-600"
+                    title="Edit"
+                  >
+                    <Pencil size={16} />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(review.id)}
+                    className="p-1 text-gray-400 hover:text-red-600"
+                    title="Delete"
+                  >
+                    <Trash2 size={16} />
                   </button>
                 </div>
               </div>
