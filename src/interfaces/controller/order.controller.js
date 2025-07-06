@@ -43,6 +43,17 @@ const OrderController = (orderUseCases) => ({
         await orderUseCases.delete(req.params.id)
         res.json({ success: true, message: "Deleted" })
     },
+
+    //order history
+    getUserOrderHistory: async (req, res) => {
+        try {
+            const history = await orderHistoryUseCases.getByUser(req.params.userId)
+            res.json({ success: true, data: history })
+        } catch (err) {
+            res.status(500).json({ success: false, message: err.message })
+        }
+    }
+
 })
 
 module.exports = OrderController
